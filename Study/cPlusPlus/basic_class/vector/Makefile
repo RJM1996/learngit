@@ -4,4 +4,4 @@ main:main.cpp vector.cpp
 	g++ -o $@ $^
 
 clean:
-	rm -r main 
+	rm -r main core.*
