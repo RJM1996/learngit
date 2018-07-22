@@ -2,6 +2,7 @@
 #pragma once
 
 #include <iostream>
+#include <algorithm>
 #include <stdio.h>
 
 using namespace std;
@@ -33,15 +34,28 @@ public:
         }
         _endofstorage = _finish;
     }
-    // 3.赋值操作符的重载
-    Vector &operator= (const Vector &v)
-    {
 
+    // 3.赋值操作符的重载
+    Vector& operator= (Vector& v)
+    {
+        if(this != &v)
+        {
+            swap(_first, v._first);
+            swap(_finish, v._finish);
+            swap(_endofstorage, v._endofstorage);
+        }
+        return *this;
     }
-    // 4. 析构
+
+    // 4.析构
     ~Vector()
     {
 
+    }
+    // 5.随机访问 [] 重载
+    DataType operator[] (size_t i)
+    {
+        return _first[i];
     }
     size_t Size();
     size_t Capacity();

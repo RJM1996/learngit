@@ -20,6 +20,7 @@ size_t Vector::Capacity()
 {
     return _endofstorage - _first;
 }
+// 扩容
 void Expand(size_t n)
 {
 
@@ -76,9 +77,15 @@ void Vector::Erase(DataType* pos)
     --_finish;
 }
 // 查找
-size_t Find(DataType x)
+size_t Vector::Find(DataType x)
 {
-
+    for(size_t i=0; i<Size(); i++)
+    {
+        if(_first[i] == x)
+        {
+          return i;
+        }
+    }
 }
 // 检查容量, 扩容
 void Vector::checkCapacity()
@@ -87,9 +94,10 @@ void Vector::checkCapacity()
     {
         DataType* new_first = new DataType[Size() * 2]; // 一次扩容至两倍
         DataType* new_finish = new_first;
-        for(DataType* i = begin(); i != end(); i++) // 把旧的先拷贝过来
+        size_t size = Size();
+        for(size_t i=0; i < size; i++) // 把旧的先拷贝过来
         {
-            *new_first = *i;
+            new_first[i] = _first[i];
             new_finish++;
         }
         delete[] _first; // 释放旧的

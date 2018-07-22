@@ -18,6 +18,11 @@ void Test02()
     v.PushBack(3);
     v.PushBack(7);
     v.PushBack(9);
+    for(size_t i=0; i<v.Size(); i++)
+    {
+        cout << v[i] << endl;
+    }
+    size_t pos = v.Find(5);
     cout << "size ecpected : 4 , actual : " << v.Size() << endl;
     cout << "capacity ecpected : 6 , actual : " << v.Capacity() << endl;
     v.PopBack();
@@ -47,13 +52,47 @@ void Test03()
     }
 }
 
+void Test04()
+{
+    Vector vc;
+    vc.PushBack(1);
+    vc.PushBack(3);
+    vc.PushBack(5);
+    vc.PushBack(7);
+    for(size_t i=0; i<vc.Size(); i++)
+    {
+        cout << vc[i] << endl;
+    }
+    size_t pos = vc.Find(5);
+    cout << "pos : " << pos << endl;
+    Vector vc1;
+    vc1.PushBack(2);
+    vc1.PushBack(4);
+    vc1.PushBack(6);
+    vc1.PushBack(8);
+    for(size_t i=0; i<vc1.Size(); i++)
+    {
+        cout << vc1[i] << endl;
+    }
+    vc1 = vc;
+    for(size_t i=0; i<vc1.Size(); i++)
+    {
+        cout << vc1[i] << endl;
+    }
+    for(size_t i=0; i<vc.Size(); i++)
+    {
+        cout << vc[i] << endl;
+    }
+}
+
 int main()
 {
     printf("\n\n\n");
     printf("\n\n\n");
 //    Test01();
-    Test02();
-    Test03();
+//    Test02();
+//    Test03();
+    Test04();
     printf("\n\n\n");
     printf("\n\n\n");
     return 0;
