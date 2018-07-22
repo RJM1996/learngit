@@ -1,5 +1,9 @@
 
 # coding:utf-8
+'''
+python 练习
+'''
+print '\n\n\n\n'
 
 ## 类型
 #counter = 0
@@ -130,14 +134,68 @@
 # print type(GetPoint()) # tuple 元组类型
 
 # 文件操作
-handle = open('./text.txt', 'r')
-print type(handle)
+# handle = open('./text.txt', 'r')
+# print type(handle)
 # 文件对象可以使用 for 循环遍历
 # 凡是可以 for 遍历的对象称为可迭代对象
-for line in handle:
-    # print line, # 加 , 不打换行
-    print line[: -1] # 切片操作
-handle.close()
+# for line in handle:
+#     # print line, # 加 , 不打换行
+#     print line[: -1] # 切片操作
+
+# 字典的键值对 : 键 对应单词 , 值 对应次数
+# data = {}
+# for word in handle:
+#     word = word[: -1] # 去掉 \n 
+#     if word in data:
+#         data[word] += 1
+#     else:
+#         data[word] = 1
+# print data
+# handle.close()
+
+# 模块
+# import add # 导入 add 模块
+# print add.Add(1, 20)
+# # 会生成 add.pyc 文件, 执行后的二进制文件
+# # 模块查找规则: 先从 sys.path 中查找
+# import sys
+# print sys.path
+
+# 实用函数
+
+# ======================================
+
+# 基础语法
+
+# 缩进规则 建议 4 个空格
+# True, False = False, True # 报复社会的做法
+
+# a, b = 10, 20
+# print a, b
+# a, b = b, a
+# print a, b
+
+# 变量的作用域
+# globals, locals
+# def func():
+#     x = 10
+#     print locals()
+#     print globals()
+#     return x
+# # print x  # 会报错
+# func()
+
+
+# 文档字符串
+def Add(x, y):
+    '''
+    求两个对象相加的结果
+    '''
+    return x + y
+
+# print Add.__doc__
+# help(Add)
+# help(type)
 
 
 
@@ -162,7 +220,7 @@ handle.close()
 
 
 
-
+print '\n\n\n\n'
 print '\n\n\n\n'
 
 
