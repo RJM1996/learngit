@@ -15,12 +15,13 @@ void CharSet(string& str)
     size_t j = 0;
     for(i=0; i<str_size; i++)
     {
+        flag = 0;
         for(j=0; j<str_size; j++)
         {
             if(ret[j] == str[i])
             {
                 flag = 1;
-                // break;
+                break;
             }
         }
 
@@ -47,22 +48,31 @@ bool Exist(char ch, string& str)
     return exist;
 }
 
-int main()
+void Test()
 {
     string str;
-    while(getline(cin, str))
+    while(cin >> str)
     {
-        string ret;
-        bool exist = false;
-        size_t len = str.size();
-        for(size_t i=0; i<len; i++)
-        {
-            if(Exist(str[i], ret) == false)
-            {
-                ret += str[i];
-            }
-        }
-        cout << ret << endl;
+        CharSet(str);
     }
+}
+
+int main()
+{
+    Test();
+//    string str;
+//    while(getline(cin, str))
+//    {
+//        string ret;
+//        size_t len = str.size();
+//        for(size_t i=0; i<len; i++)
+//        {
+//            if(Exist(str[i], ret) == false)
+//            {
+//                ret += str[i];
+//            }
+//        }
+//        cout << ret << endl;
+//    }
     return 0;
 }
