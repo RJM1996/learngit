@@ -8,31 +8,43 @@ using namespace std;
 
 void CharSet(string& str)
 {
-    string ret(100, '\0');
+    string ret;
     int flag = 0;
     size_t str_size = str.size();
     size_t i = 0;
     size_t j = 0;
     for(i=0; i<str_size; i++)
     {
-        for(j=0; j<100; j++)
+        for(j=0; j<str_size; j++)
         {
             if(ret[j] == str[i])
             {
                 flag = 1;
-                break;
+                // break;
             }
         }
+
         if(flag != 1)
         {
-            ret[i] = str[i];
+            ret += str[i];
         }
     }
     cout << ret << endl;
-    cout << ret[0] << endl;
-    cout << ret[1] << endl;
-    cout << ret[2] << endl;
-    cout << ret[3] << endl;
+}
+
+bool Exist(char ch, string& str)
+{
+    size_t len = str.size();
+    bool exist = false;
+    for(size_t i=0; i<len; i++)
+    {
+        if(ch == str[i])
+        {
+            exist = true;
+            return exist;
+        }
+    }
+    return exist;
 }
 
 int main()
@@ -40,7 +52,17 @@ int main()
     string str;
     while(getline(cin, str))
     {
-        CharSet(str);
+        string ret;
+        bool exist = false;
+        size_t len = str.size();
+        for(size_t i=0; i<len; i++)
+        {
+            if(Exist(str[i], ret) == false)
+            {
+                ret += str[i];
+            }
+        }
+        cout << ret << endl;
     }
     return 0;
 }
