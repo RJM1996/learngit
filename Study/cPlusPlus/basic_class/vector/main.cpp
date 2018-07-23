@@ -85,6 +85,27 @@ void Test04()
     }
 }
 
+void Test05()
+{
+    Vector vc;
+    vc.PushBack(1);
+    vc.PushBack(1);
+    vc.PushBack(1);
+    vc.PushBack(1);
+    vc.PopBack();
+    vc.PopBack();
+    vc.PopBack();
+    vc.PopBack();
+    if(vc.Empty())
+    {
+        cout << "Vector 为空" << endl;
+    }
+    else
+    {
+        cout << "Vector 不为空" << endl;
+    }
+}
+
 int main()
 {
     printf("\n\n\n");
@@ -92,7 +113,8 @@ int main()
 //    Test01();
 //    Test02();
 //    Test03();
-    Test04();
+//    Test04();
+    Test05();
     printf("\n\n\n");
     printf("\n\n\n");
     return 0;

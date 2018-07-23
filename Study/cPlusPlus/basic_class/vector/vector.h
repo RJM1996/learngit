@@ -50,7 +50,13 @@ public:
     // 4.析构
     ~Vector()
     {
-
+        if(_first)
+        {
+            delete[] _first;
+        }
+        _first = NULL;
+        _finish = NULL;
+        _endofstorage = NULL;
     }
     // 5.随机访问 [] 重载
     DataType operator[] (size_t i)
@@ -61,13 +67,13 @@ public:
     size_t Capacity();
     DataType* begin();
     DataType* end();
-    void Expand(size_t n);
     void PushBack(DataType x);
     void PopBack();
     void Reserve(size_t n);
     void Insert(DataType* pos, const DataType& val);
     void Erase(DataType* pos);
     size_t Find(DataType x);
+    bool Empty();
 private:
     void checkCapacity(); // 检查容量, 扩容
 

@@ -6,6 +6,11 @@ size_t Vector::Size()
 {
     return _finish - _first;
 }
+// 判空
+bool Vector::Empty()
+{
+    return _first == _finish;
+}
 // 迭代器
 DataType* Vector::begin()
 {
@@ -19,11 +24,6 @@ DataType* Vector::end()
 size_t Vector::Capacity()
 {
     return _endofstorage - _first;
-}
-// 扩容
-void Expand(size_t n)
-{
-
 }
 // 尾插
 void Vector::PushBack(DataType x)
@@ -86,6 +86,7 @@ size_t Vector::Find(DataType x)
           return i;
         }
     }
+    return -1;
 }
 // 检查容量, 扩容
 void Vector::checkCapacity()
