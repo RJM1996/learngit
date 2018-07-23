@@ -26,7 +26,6 @@ int main(int argc, char* argv[])
     }
 
     //1, 创建套接字
-
     //int socket(int domain, int type, int protocol);
     //因为http是基于tcp的, 所以用SOCK_STREAM, 可靠的
     int fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -86,7 +85,7 @@ int main(int argc, char* argv[])
         char buf[1024] = {0};
         const char* web_str = "<h1>hello, world</h1>";
         // int sprintf(char *str, const char *format, ...);
-        int ret = sprintf(buf, "HTTP/1.0 200 OK\nContent-Length:%d\n\n%s", strlen(web_str), web_str);
+        int ret = sprintf(buf, "HTTP/1.0 200 OK\nContent-Length:%lu\n\n%s", strlen(web_str), web_str);
         if(ret < 0)
         {
             perror("sprintf");
