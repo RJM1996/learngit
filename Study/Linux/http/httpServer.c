@@ -393,7 +393,7 @@ void* handle_request(void* arg)
     {
         if(S_ISDIR(st.st_mode)) // 如果请求资源是一个目录
         {
-            strcat(resource_path, "/index.html"); // 把目录的首页拼接到资源路径中
+            strcat(resource_path, "index.html"); // 把目录的首页拼接到资源路径中
         }
         // 如果请求的资源具有可执行权限
         else if(

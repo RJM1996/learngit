@@ -198,23 +198,9 @@ def Add(x, y):
 # help(type)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+a = 10
+if a >= 10:
+    print 'hello'
 
 
 
@@ -222,18 +208,3 @@ def Add(x, y):
 
 print '\n\n\n\n'
 print '\n\n\n\n'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
