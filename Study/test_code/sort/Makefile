@@ -5,4 +5,4 @@ main:sort.cpp
 	g++ -o $@ $^ -g
 
 clean:
-	rm -rf main
+	rm -rf main core.*
