@@ -9,8 +9,12 @@ int main()
     char* ret = NULL;
     int max = 0;
     int count = 0;
+    int str_nums = 1; // 用来记录最大长度字符串的个数
     while(scanf("%s", str) != EOF)
     {
+        max = 0;
+        count = 0;
+        str_nums = 1;
         char* cur = str;
         while(*cur != '\0')
         {
@@ -31,6 +35,10 @@ int main()
                 count++;
                 ptr++;
             }
+            if(count == max)
+            {
+                str_nums++;
+            }
             if(count > max)
             {
                 max  = count;
@@ -41,9 +49,14 @@ int main()
         }
         // printf("max = %d\n", max);
         char* res = (char*)malloc(max + 1);
+        // memset(res, 0, max+1);
         strncpy(res, ret, max);
         res[max+1] = '\0';
-        printf("%s, %d\n", res, max);
+        for(int i=0; i<str_nums; i++)
+        {
+            printf("%s,", res);
+        }
+        printf("%d\n", max);
         free(res);
         res = NULL;
     }

@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <termios.h>
 #include <fcntl.h>
+#include <keyboard.h>
 
 struct termios tcsave;
 int flsave;
@@ -42,7 +43,6 @@ int get_key(void)
 	ret = read(0, buf, sizeof(buf));
 	if(ret < 0)
 		return -1;
-	//*
 	if(ret == 1 || ret == 2){
 		r = read(0, &buf[ret], sizeof(buf)-ret);
 		if(r > 0)
@@ -57,8 +57,6 @@ int get_key(void)
 		if(r > 0)
 			return -1;
 	}
-	//*/
-	//printf("ret = %d r = %d key=[%d]\n", ret, buf[0]);
 	key = 0;
 	for(i=0; i<ret; i++){
 		key += (buf[i]<<(i*8));
@@ -93,39 +91,4 @@ int is_space(int key)
 {
 	return key == SPACE;
 }
-#if 0
-int main(void)
-{
-	int key, ret;
-	ret = init_keyboard();
-	if(ret < 0)
-		return -1;
-	while(1){
-		key = get_key();
-		if(key < 0)
-			continue;	
-		//printf("key = %x\n", key);
-		if(is_left(key))
-			printf("left\n");
-		if(is_right(key))
-			printf("right\n");
-		if(is_up(key))
-			printf("up\n");
-		if(is_down(key))
-			printf("down\n");
-		if(is_enter(key))
-			printf("enter\n");
-		if(is_space(key))
-			printf("space\n");
-		if(is_esc(key)){
-			printf("esc\n");
-			break;
-		}
-		
-		//if(key == 'q')
-		//	break;
-	}	
-	recover_keyboard();
-	return 0;
-}
-#endif
+

@@ -1,9 +1,13 @@
 #include <def.h>
 
 struct data t = {
-    .x=2,
-    .y=0
+	.x = 2,
+	.y = 0
 };
+
+int background[H][W];
+int cur;
+int next;
 
 struct shape shape_arr[7] = {
 	{
