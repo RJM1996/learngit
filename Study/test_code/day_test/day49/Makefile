@@ -1,5 +1,5 @@
-main:test.c
-	clang -o $@ $^ -g
+main:test.cpp
+	g++ -o $@ $^ -g
 
 clean:
 	rm -f main core.*
