@@ -64,7 +64,7 @@ int get_line(int sock, char line[], int size)
 
 void echo_error(int sock, int status_code)
 {
-    char* _404_path = "webroot/error_code/404/404.html";
+    std::string _404_path = "webroot/error_code/404/404.html";
     int fd = open(_404_path, O_RDONLY);
     if(fd < 0)
     {
@@ -103,9 +103,7 @@ void status_response(int sock, int status_code)
         case 503:
 
         default: ;
-
     }
-
 }
 
 // 响应
@@ -279,7 +277,8 @@ static int exe_cgi(int sock, char* method, char* resource_path, char* query_stri
 
 void* handle_request(void* arg)
 {
-    int sock = (int)arg;
+    int* socket = (int*)arg;
+    int sock = *socket;
     char line[MAX_SIZE];
     int status_code = 200; // 状态码
 
@@ -310,8 +309,8 @@ void* handle_request(void* arg)
     printf("%s", line);
     // GET /a/b/c HTTP/1.0
     // 首先提取出请求方法
-    int i = 0;
-    int j = 0;
+    size_t i = 0;
+    size_t j = 0;
     char method[MAX_SIZE/4];
     while(i < sizeof(method)-1 && j < sizeof(line) && !isspace(line[j]))
     {
@@ -493,7 +492,7 @@ int main(int argc, char* argv[])
         struct sockaddr_in client;
         socklen_t len = sizeof(client);
         int connect_fd = accept(listen_sock, (struct sockaddr*)&client, &len);
-        if(accept < 0)
+        if(connect_fd < 0)
         {
             perror("accept");
             continue;
@@ -512,9 +511,9 @@ int main(int argc, char* argv[])
 
         // 创建线程
         // int pthread_create(pthread_t *tidp,const pthread_attr_t *attr,
-        // (void*)(*start_rtn)(void*),void *arg);
+        //                   (void*)(*start_rtn)(void*),void *arg);
         pthread_t tid = 0;
-        int pthread_create_ret = pthread_create(&tid, NULL, (void*)handle_request, (void*)connect_fd);
+        int pthread_create_ret = pthread_create(&tid, NULL, (void*)handle_request, (void*)&connect_fd);
         if(pthread_create_ret < 0)
         {
             perror("pthread_create");

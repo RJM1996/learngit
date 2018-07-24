@@ -7,8 +7,6 @@
 
 ================================================================*/
 
-
-
 #pragma once
 
 #include <stdio.h>
@@ -26,6 +24,8 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <ctype.h>
+#include <string>
+
 
 // 定义首页
 #define HOME_PAGE index.html

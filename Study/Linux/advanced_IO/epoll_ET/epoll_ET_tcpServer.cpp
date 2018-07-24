@@ -21,6 +21,11 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <string>
+#include <sys/stat.h>
+#include <sys/stat.h>
+#include <sys/sendfile.h>
+
 
 #define MAX 10
 
@@ -114,9 +119,9 @@ ssize_t noBlockRead(int fd, char* buf, int size)
     ssize_t total_size = 0;
     while(1)
     {
-        int cur_size = read(fd, buf + total_size, sizeof(buf)/sizeof(buf[0]));
+        ssize_t cur_size = read(fd, buf + total_size, sizeof(buf)/sizeof(buf[0]));
         total_size += cur_size;
-        if(cur_size < sizeof(buf)/sizeof(buf[0]) || errno == EAGAIN)
+        if(cur_size < (ssize_t)(sizeof(buf)/sizeof(buf[0])) || errno == EAGAIN)
         {
             break;
         }
@@ -144,23 +149,43 @@ void service(int client, int epoll_fd)
     }
     buf[ret] = 0;
     printf("\n=====================================\n");
-    printf("client say : %s \n", buf);
+    printf("client say :\n%s\n", buf);
     printf("\n=====================================\n");
 
-    char rev[1024] = {0};
-    char* hello = " <!DOCTYPE html> \
-     <html> \
-     <head> \
-         <meta http-equiv='Content-Type' content='text/html; charset=utf-8' /> \
-    </head> \
-         <body>  <h1>恭喜你, 连接成功!</h1>欢迎访问我们的网站 --> <a href='http://www.sust.xin'>SSDN<a> \
-         </body> \
-    </html>";
-    sprintf(rev, "HTTP/1.0 200 OK\nContent-Length:%u\n\n%s", strlen(hello), hello ); 
-    write(client, rev, sizeof(buf)-1);
+    const std::string home = "./webroot/index.html";
+    struct stat st;
+    if(stat(home.c_str(), &st) < 0)
+    {
+        printf("文件不存在\n");
+        perror("stst");
+        return ;
+    }
+    int index_fd = open(home.c_str(), O_RDONLY);
+
+    // 定义状态行和空行
+    const char* status_line = "HTTP/1.0 200 OK\r\n";                                                                   
+    const char* blank_line = "\r\n";
+    // 1.发送响应状态行
+    send(client, status_line, strlen(status_line), 0);
+
+    // 2.发送Content-Length用于描述HTTP消息实体的传输长度
+    char len_buf[256] = {0};
+    // content_length = "Content-Length: %u\r\n"
+    sprintf(len_buf, "Content-Length: %lu\r\n", st.st_size);
+    send(client, len_buf, strlen(len_buf), 0);
+
+    // 3.发送空行
+    send(client, blank_line, strlen(blank_line), 0);
+
+    // 4.发送所请求的资源
+    // ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
+    if(sendfile(client, index_fd, NULL, st.st_size) < 0)
+    {
+        perror("sendfile");
+    }
+    // 关闭打开的文件
+    close(index_fd);
 }
-
-
 
 int main(int argc, char* argv[])
 {

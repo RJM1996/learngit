@@ -1,5 +1,7 @@
 .PHONY:clean
-server:epoll_ET_tcpServer.c
-	clang $^ -o $@ -g -std=c99
+
+server:epoll_ET_tcpServer.cpp
+	g++ $^ -o $@ -g 
+
 clean:
-	rm -f main core.*
+	rm -f server core.*
