@@ -53,13 +53,16 @@ public:
     void BubbleSort()
     {
         int i, j;
-        for(i=0; i<m_size-1; i++)
+        int flag = 1; // 用 flag 优化, 如果一趟没有交换说明已经有序, 就不用再循环了
+        for(i=0; i<m_size-1 && flag; i++)
         {
+            flag = 0;
             for(j=0; j<m_size-i-1; j++)
             {
                 if(m_arr[j] > m_arr[j+1])
                 {
                     swap(m_arr[j], m_arr[j+1]);
+                    flag = 1;
                 }
             }
         }
@@ -99,8 +102,9 @@ void TestQuickSort()
 void TestBubble()
 {
     TEST_HEAD;
-    int arr[] = {6, 1, 2, 7, 9, 3, 4, 5, 10, 8};
+    // int arr[] = {6, 1, 2, 7, 9, 3, 4, 5, 10, 8};
     // char arr[] = {'a', 'c', 'g', 'h', 'f', 'b', 'd', 'e'};
+    int arr[] = {1, 2, 3, 4, 5, 6, 8, 7, 9};
     int len = sizeof(arr)/sizeof(arr[0]);
     // cout << "len = " << len << endl;
     Sort<int> s(arr, len);
