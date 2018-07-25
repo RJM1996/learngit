@@ -5,4 +5,4 @@ main:test.cpp
 	g++ -o $@ $^ -g
 
 clean:
-	rm -f main
+	rm -f main core.*

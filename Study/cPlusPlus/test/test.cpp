@@ -398,7 +398,6 @@ void Test08()
     Date dt(2018, 7, 20, tm);
 }
 
-#endif
 
 #include<vector>
 
@@ -437,6 +436,68 @@ void Test09()
     cout << ret << endl;
 }
 
+#endif
+
+#include <vector>
+
+void print(const vector<int>& v)
+{
+    for(size_t i=0; i<v.size(); ++i)
+    {
+        // for + operator[]
+        cout << v[i] << " ";
+    }
+    cout << endl;
+}
+
+void test_vector()
+{
+    vector<int> v1;
+    // 1. push_back
+    v1.push_back(1);
+    v1.push_back(2);
+    v1.push_back(3);
+    v1.push_back(4);
+    v1.push_back(5);
+    print(v1);
+    // 2. 迭代器
+    vector<int>::iterator it = v1.begin();
+    while(it != v1.end())
+    {
+        cout << *it << " ";
+        ++it;
+    }
+    cout << endl;
+    // 3. const 迭代器
+    vector<int>::const_iterator const_it = v1.begin();
+    while(const_it != v1.end())
+    {
+        cout << *const_it << " ";
+        // *const_it = 99; // 不能修改
+        ++const_it;
+    }
+    cout << endl;
+    // 4. 反向迭代器
+    vector<int>::reverse_iterator reverse_it = v1.rbegin();
+    while(reverse_it != v1.rend())
+    {
+        cout << *reverse_it << " ";
+        ++reverse_it;
+    }
+    cout << endl;
+    // 5. assign
+    // template <class InputIterator>
+    // void assign (InputIterator first, InputIterator last);
+    // void assign (size_type n, const value_type& val);
+    v1.assign(10, 100);
+    print(v1);
+    vector<int> v2(10, 99);
+    v1.assign(v2.begin(), v2.end());
+    print(v1);
+    v1.assign(v2.begin()+1, v2.end()-1);
+    print(v1);
+}
+
 int main()
 {
     // Test01();
@@ -450,6 +511,7 @@ int main()
     // Test05();
     // Test06();
     // Test07();
-    Test09();
+    // Test09();
+    test_vector();
     return 0;
 }

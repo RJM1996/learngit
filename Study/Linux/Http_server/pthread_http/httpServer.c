@@ -64,8 +64,8 @@ int get_line(int sock, char line[], int size)
 
 void echo_error(int sock, int status_code)
 {
-    std::string _404_path = "webroot/error_code/404/404.html";
-    int fd = open(_404_path.c_str(), O_RDONLY);
+    char* _404_path = "webroot/error_code/404/404.html";
+    int fd = open(_404_path, O_RDONLY);
     if(fd < 0)
     {
         perror("open");
@@ -81,7 +81,7 @@ void echo_error(int sock, int status_code)
     // ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
     // 在内核中, 两个文件描述符之间直接进行读写, 效率高
     struct stat st;
-    stat(_404_path.c_str(), &st);
+    stat(_404_path, &st);
     ssize_t ret = sendfile(sock, fd, NULL, st.st_size);
     if(ret < 0)
     {
