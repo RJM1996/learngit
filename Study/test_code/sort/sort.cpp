@@ -84,11 +84,13 @@ void TestQuickSort()
 {
     TEST_HEAD;
     // int arr[] = {6, 1, 2, 7, 9, 3, 4, 5, 10, 8};
-    char arr[] = {'a', 'c', 'g', 'h', 'f', 'b', 'd', 'e'};
+    // char arr[] = {'a', 'c', 'g', 'h', 'f', 'b', 'd', 'e'};
+    string arr[] = {"ab", "de", "zx", "ce", "po"};
     int len = sizeof(arr)/sizeof(arr[0]);
     // cout << "len = " << len << endl;
     // Sort<int> s(arr, len);
-    Sort<char> s(arr, len);
+    // Sort<char> s(arr, len);
+    Sort<string> s(arr, len);
     s.print();
     s.QuickSort(0, len-1);
     s.print();

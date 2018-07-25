@@ -1,50 +1,71 @@
-
 #include <iostream>
 #include <string>
-
 using namespace std;
 
-// 返回最长的数字序列的长度, 并输出该数字序列, 如果有多个也一起输出
-#if 0
-unsigned int Continumax(char** pOutputstr,  char* intputstr)
-{
-
-}
-#endif
-
-int main()
+// 在字符串中找出连续最长的数字串
+int Test01()
 {
     string str;
-    while(cin >> str)
+    while( cin >> str  )
     {
-        size_t i = 0;
+        size_t i;
         size_t max = 0;
-        string tmp;
-        string ret;
-        for(i=0; i<str.size(); i++)
+        string ss;
+        string out;
+        for(i = 0; i < str.size(); i++)
         {
             if(str[i] >= '0' && str[i] <= '9')
             {
-                tmp += str[i];
-                // 说明是数字
-                while(str[i+1] >= '\0' && str[i+1] <= '\0')
+                ss += str[i];
+                while(str[i + 1] >= '0' && str[i + 1] <= '9')
                 {
                     i++;
-                    tmp += str[i];
+                    ss += str[i];
                 }
-                if(tmp.size() > max)
+                if(ss.size() > max)
                 {
-                    max = tmp.size();
-                    ret = tmp;
+                    max = ss.size();
+                    out = ss;
                 }
-                else if(tmp.size() == max)
-                {
-                    ret += tmp;
-                }
+                else if(ss.size() == max)
+                    out += ss;
             }
-            tmp.clear();
+            ss.clear();
         }
-        cout << ret << "," << max << endl;
+        cout << out << ',' << max << endl;
     }
+    return 0;
+}
+
+// 和位 sum 的方法数
+#include<iostream>
+#include<vector>
+using namespace std;
+
+int Test02()
+{
+    int n, sum;
+    cin >> n >> sum;
+
+    vector<long long> a(sum + 1);
+    vector<int> b(n);
+
+    for(int i = 0; i < n; i++)
+        cin >> b[i];
+    
+    a[0] = 1;
+
+    for (int i = 0; i < n; i++)
+        for (int j = sum; j >= b[i]; j--)
+            a[j] += a[j - b[i]];
+
+    cout << a[sum] << endl;
+    return 0;
+}
+
+int main()
+{
+    // Test01();
+    Test02();
     return 0;
 }
