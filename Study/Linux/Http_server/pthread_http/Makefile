@@ -1,7 +1,7 @@
 
 
 .PHONY:clean
-main:httpServer.c
-	gcc $^ -o $@ -g -lpthread
+main:httpServer.cpp
+	g++ $^ -o $@ -g -lpthread
 clean:
 	rm -f main core.*
