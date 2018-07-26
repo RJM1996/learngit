@@ -1,8 +1,11 @@
 #include <iostream>
 #include <string.h>
 #include <assert.h>
+#include <stdio.h>
 
 using namespace std;
+
+#define TEST_HEAD printf("=====%s=====\n", __FUNCTION__)
 
 // 实现两种方式的引用计数, 写时拷贝。
 
@@ -434,9 +437,123 @@ public:
 };
 size_t String::npos = -1;
 
+// 四. 引用计数, 写时拷贝
+namespace cow
+{
+class String 
+{
+public:
+    // 1. 构造
+    String(const char* str = " ")
+    {
+        m_str = new char[strlen(str) + 1];
+        strcpy(m_str, str);
+        m_pcount = new int(1);
+    }
+    // 2. 拷贝构造
+    // s2(s1)
+    String(const String& s)
+    {
+        m_str = s.m_str;
+        m_pcount = s.m_pcount;
+        ++(*m_pcount); // 引用计数加一
+    }
+    // 3. 赋值操作符的重载
+    // s2 = s1
+    String& operator= (const String& s)
+    {
+        if(m_str != s.m_str)
+        {
+            if(--(*m_pcount) == 0)
+            {
+                delete[] m_str;
+                delete m_pcount;
+            }
+            m_str = s.m_str;
+            m_pcount = s.m_pcount;
+            ++(*m_pcount);
+        }
+        return *this;
+    }
+    // 4. 析构
+    ~String()
+    {
+        if(--(*m_pcount) == 0)
+        {
+            delete[] m_str;
+            delete m_pcount;
+        }
+    }
+    // 5. 写时拷贝
+    void CopyOnWrite()
+    {
+        if(*m_pcount > 1)
+        {
+            char* tmp = new char[strlen(m_str)+1];
+            strcpy(tmp, m_str);
+            --(*m_pcount);
+            m_str = tmp;
+            m_pcount = new int(1);
+        }
+    }
+    // 6. 随机访问 重载 []
+    char& operator[] (size_t pos)
+    {
+        CopyOnWrite();
+        return m_str[pos];
+    }
+    // 读时不拷贝
+    const char& operator[] (size_t pos) const
+    {
+        cout << "const []" << endl;
+        return m_str[pos];
+    }
+
+    char* C_str()
+    {
+        return m_str;
+    }
+
+private:
+    char* m_str;
+    int* m_pcount; // 引用计数器
+    size_t m_size;
+    size_t m_capacity;
+};
+}
+
+void TestCopyConstructor()
+{
+    String s1("hello");
+    String s3("world");
+    cout << s1.c_str() << endl;
+    cout << s3.c_str() << endl;
+    s1 = s3;
+    cout << s1.c_str() << endl;
+    cout << s3.c_str() << endl;
+    String s2(s1);
+    cout << s1.c_str() << endl;
+    cout << s2.c_str() << endl;
+}
+
+void TestCopyOnWrite()
+{
+    TEST_HEAD;
+    cow::String s1("hello");
+    cow::String s2 = s1;
+    const cow::String s3(s1);
+    cout << s1.C_str() << endl;
+    cout << s2.C_str() << endl;
+    // cout << s3.C_str() << endl;
+    // s2[0] = 'x';
+    cout << s3[1] << endl;
+    cout << s1.C_str() << endl;
+    cout << s2.C_str() << endl;
+}
 
 void TestString()
 {
+    TEST_HEAD;
     String s1("hello, world");
     String s2 = s1;
     cout << s1.c_str() << endl;
@@ -465,8 +582,37 @@ void TestString()
     cout << ret << endl;
 }
 
+void TestNoCount()
+{
+    TEST_HEAD;
+    String s1("111111111111111");
+    int begin = clock();
+    for(int i=0; i<1000000; i++)
+    {
+        String s2(s1);
+    }
+    int end = clock();
+    cout << end - begin << endl;
+}
+void TestCount()
+{
+    TEST_HEAD;
+    cow::String s1("111111111111111");
+    int begin = clock();
+    for(int i=0; i<1000000; i++)
+    {
+        cow::String s2(s1);
+    }
+    int end = clock();
+    cout << end - begin << endl;
+}
+
 int main()
 {
     TestString();
+    TestCopyOnWrite();
+    TestNoCount();
+    TestCount();
+    TestCopyConstructor();
     return 0;
 }
