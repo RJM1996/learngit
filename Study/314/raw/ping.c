@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
@@ -10,6 +11,7 @@
 #include <netpacket/packet.h>
 #include <net/ethernet.h>
 #include <linux/if_ether.h>
+#include <netdb.h>
 
 #if 0
 struct ip
@@ -42,49 +44,56 @@ struct ethhdr {
 	unsigned char	h_source[ETH_ALEN];	/* source ether addr	*/
 	__be16		h_proto;		/* packet type ID field	*/
 } __attribute__((packed));
-
 #endif
 
 int main()
 {
-    // int sfd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
-    int sfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-    if(sfd == -1)
-    {
-        perror("socket");
-        exit(1);
-    }
-    char buf[1500];
-    while(1)
-    {
-        sleep(1);
-        memset(buf, 0, sizeof(buf));
-        if(read(sfd, buf, sizeof(buf)) < 0) break;
-        struct ethhdr* pe = (struct ethhdr*)(buf);
-        printf("%02x:%02x:%02x:%02x:%02x:%02x <--> ", 
-               pe->h_source[0],
-               pe->h_source[1],
-               pe->h_source[2],
-               pe->h_source[3],
-               pe->h_source[4],
-               pe->h_source[5]);
-        printf("%02x:%02x:%02x:%02x:%02x:%02x  \n", 
-               pe->h_dest[0],
-               pe->h_dest[1],
-               pe->h_dest[2],
-               pe->h_dest[3],
-               pe->h_dest[4],
-               pe->h_dest[5]);
+    struct hostent* p= gethostbyname("www.sust.xin");
+    printf("%s\n", inet_ntoa(*(struct in_addr*)(p->h_addr)));
+    struct timeval tv;
+    struct timezone tz;
+    int time_begin = gettimeofday(&tv, &tz);
 
-        if(ntohs(pe->h_proto) == 0x0800)
-        {
-            printf("\tIP\n");
-        }
-        if(ntohs(pe->h_proto) == 0x0806)
-        {
-            printf("\tARP\n");
-        }
-    }
+
+
+    // int sfd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
+    // int sfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+    // if(sfd == -1)
+    // {
+    //     perror("socket");
+    //     exit(1);
+    // }
+    // char buf[1500];
+    // while(1)
+    // {
+    //     sleep(1);
+    //     memset(buf, 0, sizeof(buf));
+    //     if(read(sfd, buf, sizeof(buf)) < 0) break;
+    //     struct ethhdr* pe = (struct ethhdr*)(buf);
+    //     printf("%02x:%02x:%02x:%02x:%02x:%02x <--> ", 
+    //            pe->h_source[0],
+    //            pe->h_source[1],
+    //            pe->h_source[2],
+    //            pe->h_source[3],
+    //            pe->h_source[4],
+    //            pe->h_source[5]);
+    //     printf("%02x:%02x:%02x:%02x:%02x:%02x  \n", 
+    //            pe->h_dest[0],
+    //            pe->h_dest[1],
+    //            pe->h_dest[2],
+    //            pe->h_dest[3],
+    //            pe->h_dest[4],
+    //            pe->h_dest[5]);
+
+    //     if(ntohs(pe->h_proto) == 0x0800)
+    //     {
+    //         printf("\tIP\n");
+    //     }
+    //     if(ntohs(pe->h_proto) == 0x0806)
+    //     {
+    //         printf("\tARP\n");
+    //     }
+    // }
 
     // int op = 1;
     // setsockopt(sfd, IPPROTO_IP, IP_HDRINCL, &op, sizeof(op));
