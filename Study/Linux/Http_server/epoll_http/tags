@@ -60,8 +60,9 @@
 45	webroot/error_code/404/css/main.css	/^	45% {$/;"	s
 70	webroot/error_code/404/css/main.css	/^	70% { -moz-transform: scale(0.95, 0.95) }$/;"	s
 70	webroot/error_code/404/css/main.css	/^	70% { -webkit-transform: scale3d(0.95, 0.95, 1) }$/;"	s
-MAX	epoll_http.cpp	23;"	d	file:
-MAX_SIZE	epoll_http.cpp	24;"	d	file:
+MAX	epoll_http.h	22;"	d
+MAX_SIZE	epoll_http.h	23;"	d
+StartUp	epoll_http.cpp	/^int StartUp(int port)$/;"	f
 a	webroot/error_code/404/css/main.css	/^html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {$/;"	s
 a 	webroot/error_code/404/css/main.css	/^a { text-decoration: none }$/;"	s
 a:hover 	webroot/error_code/404/css/main.css	/^a:hover { text-decoration: underline }$/;"	s
@@ -151,7 +152,6 @@ label	webroot/error_code/404/css/main.css	/^html, body, div, span, applet, objec
 legend	webroot/error_code/404/css/main.css	/^html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {$/;"	s
 li	webroot/error_code/404/css/main.css	/^html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {$/;"	s
 logo 	webroot/error_code/404/css/main.css	/^@-webkit-keyframes logo { $/;"	s
-main	epoll_http.cpp	/^int main(int argc, char* argv[])$/;"	f
 main	main.cpp	/^int main(int argc, char* argv[])$/;"	f
 main 	webroot/error_code/404/css/main.css	/^@-moz-keyframes main { $/;"	s
 main 	webroot/error_code/404/css/main.css	/^@-webkit-keyframes main { $/;"	s
@@ -192,7 +192,6 @@ service	epoll_http.cpp	/^void service(int client, int epoll_fd)$/;"	f
 setNoBlock	epoll_http.cpp	/^void setNoBlock(int fd)$/;"	f
 small	webroot/error_code/404/css/main.css	/^html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {$/;"	s
 span	webroot/error_code/404/css/main.css	/^html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {$/;"	s
-startUp	epoll_http.cpp	/^int startUp(int port)$/;"	f
 status_line	epoll_http.h	/^const char* status_line = "HTTP\/1.0 200 OK\\r\\n";                                                                   $/;"	v
 status_response	epoll_http.cpp	/^void status_response(int sock, int status_code)$/;"	f
 strike	webroot/error_code/404/css/main.css	/^html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {$/;"	s

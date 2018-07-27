@@ -1,27 +1,9 @@
-
-// ET 模式的epoll
-#include <iostream>
-#include <stdio.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <sys/epoll.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h> 
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
-#include <string>
-#include <sys/stat.h>
-#include <sys/stat.h>
-#include <sys/sendfile.h>
 #include "epoll_http.h"
 
-using namespace std;
-
-#define MAX 20
-#define MAX_SIZE 1024
+// 状态行
+const char* status_line = "HTTP/1.0 200 OK\r\n";                                                                   
+// 空行
+const char* blank_line = "\r\n";
 
 // setNoBlock
 // 将一个文件描述符设置为非阻塞
@@ -41,7 +23,7 @@ void setNoBlock(int fd)
 //////////////////////////////////
 
 // 1, 获取监听套接字
-int startUp(int port)
+int StartUp(int port)
 {
     if(port < 1024)
     {
@@ -106,7 +88,7 @@ void getConnect(int listen_fd, int epoll_fd)
     }
 }
 
-// 实现无阻塞地读的接口
+// 3. 实现无阻塞地读的接口
 ssize_t noBlockRead(int fd, char* buf, int size)
 {
     (void) size;
@@ -124,7 +106,7 @@ ssize_t noBlockRead(int fd, char* buf, int size)
     return total_size;
 }
 
-// 获取报头的每一行
+// 4. 获取报头的每一行
 // 要把 \r -> \n || \r\n -> \n
 int get_line(int sock, char line[], int size)
 {
@@ -177,7 +159,7 @@ int get_line(int sock, char line[], int size)
     return i;
 }
 
-// 响应, 传回网页
+// 5. 响应, 传回网页
 int echo_www(int sock, const char* resource_path, int size)
 {
     int fd = open(resource_path, O_RDONLY);
@@ -212,7 +194,7 @@ int echo_www(int sock, const char* resource_path, int size)
     return 200;
 }
 
-
+// 6. 回传错误信息
 void echo_error(int sock, int status_code)
 {
     string _404_path = "webroot/error_code/404/404.html";
@@ -242,7 +224,7 @@ void echo_error(int sock, int status_code)
     close(fd);
 }
 
-
+// 7. 清理剩余首部信息
 void handle_hander(int sock)
 {
     char buf[1024];
@@ -253,7 +235,7 @@ void handle_hander(int sock)
     } while(ret > 0 && strcmp(buf, "\n") != 0);
 }
 
-// 返回状态信息
+// 8. 返回状态信息
 void status_response(int sock, int status_code)
 {
     handle_hander(sock);
@@ -269,7 +251,7 @@ void status_response(int sock, int status_code)
 }
 
 
-// 2, 正常客户端就绪, 开始服务
+// 9, 正常客户端就绪, 开始服务
 void service(int client, int epoll_fd)
 {
     char line[1024] = {0};
@@ -355,6 +337,7 @@ void service(int client, int epoll_fd)
         strcat(resource_path, "index.html");
     }
     cout << "请求资源路径 : " << resource_path << endl;
+    cout << "query_string : " << query_string << endl;
 
     // int stat(const char *file_name, struct stat *buf);
     // 通过文件名filename获取文件信息，并保存在buf所指的结构体stat中
@@ -389,7 +372,7 @@ void service(int client, int epoll_fd)
 
         if(cgi_flag == 1)
         {
-            // status_code = exe_cgi(client, method, resource_path, query_string);
+            status_code = exe_cgi(client, method, resource_path, query_string);
         }
         else
         {
@@ -417,39 +400,6 @@ void service(int client, int epoll_fd)
         }
     }
 
-    /*
-    const std::string home = "./webroot/index.html";
-    if(stat(home.c_str(), &st) < 0)
-    {
-        printf("文件不存在\n");
-        perror("stst");
-        return ;
-    }
-    int index_fd = open(home.c_str(), O_RDONLY);
-
-    // 定义状态行和空行
-    const char* status_line = "HTTP/1.0 200 OK\r\n";                                                                   
-    const char* blank_line = "\r\n";
-    // 1.发送响应状态行
-    send(client, status_line, strlen(status_line), 0);
-
-    // 2.发送Content-Length用于描述HTTP消息实体的传输长度
-    char len_buf[256] = {0};
-    // content_length = "Content-Length: %u\r\n"
-    sprintf(len_buf, "Content-Length: %lu\r\n", st.st_size);
-    send(client, len_buf, strlen(len_buf), 0);
-
-    // 3.发送空行
-    send(client, blank_line, strlen(blank_line), 0);
-
-    // 4.发送所请求的资源
-    // ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
-    if(sendfile(client, index_fd, NULL, st.st_size) < 0)
-    {
-        perror("sendfile");
-    }
-    */
-
     cout << "状态码 : " << status_code << endl;
     if(status_code != 200)
     {
@@ -457,70 +407,128 @@ void service(int client, int epoll_fd)
     }
 }
 
-int main(int argc, char* argv[])
+
+// cgi
+static int exe_cgi(int sock, char* method, char* resource_path, char* query_string)
 {
-    if(argc != 2)
+    printf("进入 CGI \n");
+    // 环境变量父子进程都可以看见
+    int content_length = -1;
+    char method_env[MAX_SIZE/10];
+    char query_string_env[MAX_SIZE];
+    char content_length_env[MAX_SIZE/10];
+
+    // 如果是 get 方法, 就清理掉剩余的报头
+    if(strcasecmp(method, "GET") == 0)
     {
-        printf("Usage : ./server [port > 1024]\n");
-        return 1;
+        handle_hander(sock);
+    }
+    else
+    {
+        // 如果是 post 方法
+        // 因为参数在正文中, 所以首先要知道Content-Length
+        char buf[1024];
+        int ret = -1;
+        do
+        {
+            ret = get_line(sock, buf, sizeof(buf));
+            if(ret > 0 && strncasecmp(buf, "Content-Length: ", 16) == 0)
+            {
+                content_length = atoi(&buf[16]);
+            }
+        } while(ret > 0 && strcmp(buf, "\n") != 0);
+        if(content_length == -1)
+        {
+            return 404;
+        }
     }
 
-    // 首先要获取监听套接字
-    int listen_sock = startUp(atoi(argv[1]));
+    // 发送状态行和空行
+    send(sock, status_line, strlen(status_line), 0);
+    send(sock, blank_line, strlen(blank_line), 0);
 
-    // 创建 epoll 模型
-    int epfd = epoll_create(MAX);
-
-    // 将 listen_sock 设置为非阻塞
-    setNoBlock(listen_sock);
-
-    // 将监听套接字注册到 epoll 模型中
-    struct epoll_event ev;
-    ev.events = EPOLLIN | EPOLLET;
-    ev.data.fd = listen_sock;
-    int epoll_ctl_ret = epoll_ctl(epfd, EPOLL_CTL_ADD, listen_sock, &ev);
-    if(epoll_ctl_ret < 0)
+    // 创建子进程, 执行 execl 
+    // 创建管道, 用于父子进程通信
+    int input[2];
+    int output[2];
+    // int pipe(int pipefd[2]);
+    if(pipe(input) < 0 || pipe(output) < 0)
     {
-        perror("epoll_ctl");
-        return 6;
+        perror("pipe");
+        return 404;
     }
 
-    // 循环等待连接, 提供服务
-    while(1)
+    pid_t pid = fork();
+    if(pid < 0)
     {
-        struct epoll_event evs[MAX];
-        // 获取就绪事件
-        int epoll_wait_ret = epoll_wait(epfd, evs, MAX, -1);
-        if(epoll_wait_ret < 0)
+        perror("fork");
+        return 404;
+    }
+    else if(pid == 0)
+    {
+        // child
+        close(input[1]);
+        close(output[0]);
+        sprintf(method_env, "METHOD=%s", method);
+        putenv(method_env);
+        if(strcasecmp(method, "GET") == 0)
         {
-            perror("epoll_wait");
-            continue;
+            sprintf(query_string_env, "QUERY_STRING=%s", query_string);
+            putenv(query_string_env);
         }
-        if(epoll_wait_ret == 0)
+        else
         {
-            printf("epoll timeout !\n");
-            continue;
+            sprintf(content_length_env, "CONTENT_LENGTH=%d", content_length);
+            putenv(content_length_env);
         }
-        // 到这里说明有事件就绪了
-        for(int i = 0; i < epoll_wait_ret; i++)
+
+        if(dup2(input[0], 0) < 0 || dup2(output[1], 1) < 0)
         {
-            // 如果不是读事件就绪
-            if(!(evs[i].events & EPOLLIN))
+            perror("dup2");
+            return 404;
+        }
+
+        // 到达程序替换
+        int ret = execl(resource_path, resource_path, NULL);
+        if(ret == -1)
+        {
+            perror("execl");
+            return 404;
+        }
+        exit(1);
+    }
+    else
+    {
+        close(input[0]);
+        close(output[1]);
+
+        int i = 0;
+        char ch = '\0';
+        //POST
+        if(strcasecmp(method, "POST") == 0)
+        {
+            for(; i < content_length; i++)
             {
-                continue;
+                recv(sock, &ch, 1, 0);
+                send(input[1], &ch, 1, 0);
             }
-            // 如果是监听套接字的读事件就绪
-            if(evs[i].data.fd == listen_sock)
-            {
-                // 开始进行连接
-                getConnect(listen_sock, epfd);
-            }
-            else
-            {
-                // 说明是正常客户端的读事件就绪, 开始服务
-                service(evs[i].data.fd, epfd);
-            }
-        } // loop 1 end
-    } // loop 2 end
-    return 0;
+        }
+
+        //GET
+        ch = '\0';
+        while(read(output[0], &ch, 1))
+        {
+            send(sock, &ch, 1, 0); 
+        }
+
+        int ret = waitpid(pid, NULL, 0);
+        if(ret < 0)
+        {
+            perror("waitpid");
+            return 404;
+        }
+        close(input[1]);
+        close(output[0]);
+    }
+    return 200;
 }
