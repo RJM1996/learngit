@@ -8,9 +8,9 @@ int main()
     Math math;
     cin >> x >> y;
 
-    cout << math.add(x, y) << endl;
-    cout << math.sub(x, y) << endl;
-    cout << math.mul(x, y) << endl;
-    cout << math.div(x, y) << endl;
+    cout << "x + y = " << math.add(x, y) << endl;
+    cout << "x - y = " << math.sub(x, y) << endl;
+    cout << "x * y = " << math.mul(x, y) << endl;
+    cout << "x / y = " << math.div(x, y) << endl;
 }
 

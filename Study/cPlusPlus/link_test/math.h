@@ -1,7 +1,3 @@
-#include <iostream>
-
-using namespace std;
-
 class Math {
 public:
     double add(double& t_x, double& t_y);
