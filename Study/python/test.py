@@ -1,4 +1,4 @@
-
+#!/usr/bin/python
 # coding:utf-8
 '''
 python 练习
@@ -187,22 +187,76 @@ print '\n\n\n\n'
 
 
 # 文档字符串
-def Add(x, y):
-    '''
-    求两个对象相加的结果
-    '''
-    return x + y
+# def Add(x, y):
+#     '''
+#     求两个对象相加的结果
+#     '''
+#     return x + y
 
 # print Add.__doc__
 # help(Add)
 # help(type)
 
 
-a = 10
-if a >= 10:
-    print 'hello'
+# a = 10
+# if a >= 10:
+#     print 'hello'
 
+# Unix 起始行
+# shebang
+# print 'hehe'
 
+# 对象和类型
+# a = 2
+# print id(a)
+# print type(a)
+# b = 3
+# print id(b)
+# print type(b)
+# b = 2
+# print id(b)
+# print type(b)
+
+# 标准类型
+ 
+# 其他内建类型
+# 类型的类型也是对象
+# a = 10
+# b = type(a)
+# print type(a)
+# print type(b)
+# # NULL 对象
+# print type(None)
+# def func():
+#     print "hehe"
+# print type(func())
+
+# a = 'hehe' # 当做 true
+# a = ''     # 空字符串 当做 false
+# if a:
+#     print '1'
+# else:
+#     print '2'
+
+# 对象的比较 -- 值 身份 类型
+# a = 100
+# b = a
+# print id(a) == id(b)
+# print a < b
+# print a > b
+# print a is b # is 关键字
+# 
+# a = 'hehe'
+# b = 'heha'
+# print a == b
+# print id(a) == id(b)
+# print a is b # is 关键字
+# print type(a) == type(b)
+# # 内建函数 isinstance
+# print isinstance(a, type('hehe'))
+
+# 类型工厂函数
+# 设计模式之工厂模式
 
 
 

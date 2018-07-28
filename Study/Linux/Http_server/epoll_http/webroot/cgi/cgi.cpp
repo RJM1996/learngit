@@ -38,10 +38,18 @@ int main()
             }
         }
     }
-    cout << "arg: " << arg << endl;
 
-    //my_cal(arg);
-    Date_cal(arg);
+    
+    char* pArg = arg;
+
+    if(pArg[0] == 'y')
+    {
+        Date_cal(arg);
+    }
+    else
+    {
+        my_cal(arg);
+    }
 
     return 0;
 }

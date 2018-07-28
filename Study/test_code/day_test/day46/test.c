@@ -43,7 +43,7 @@ int main()
         char* res = (char*)malloc(max + 1);
         strncpy(res, ret, max);
         res[max+1] = '\0';
-        printf("%s, %d\n", res, max);
+        printf("%s\n", res);
         free(res);
         res = NULL;
     }

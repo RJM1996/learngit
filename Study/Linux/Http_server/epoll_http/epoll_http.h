@@ -34,11 +34,11 @@ int StartUp(int port); // 传入端口号
 
 int get_line(int sock, char line[], int size);
 
-void status_response(int sock, int status_code);
+void status_response(int sock, int epoll_fd, int status_code);
 
 int echo_www(int sock, const char* resource_path, int size);
 
-void handle_hander(int sock);
+void handle_hander(int sock, int epoll_fd);
 
 void setNoBlock(int fd);
 
@@ -48,4 +48,4 @@ ssize_t noBlockRead(int fd, char* buf, int size);
 
 void service(int client, int epoll_fd);
 
-static int exe_cgi(int sock, char* method, char* resource_path, char* query_string);
+static int exe_cgi(int sock, int epoll_fd, char* method, char* resource_path, char* query_string);

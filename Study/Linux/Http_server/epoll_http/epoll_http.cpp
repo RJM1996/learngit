@@ -40,6 +40,15 @@ int StartUp(int port)
         perror("socket");
         return 3;
     }
+
+    // 避免 time-wait 引起的 bind 失败问题
+    int opt = 1;
+    setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    // 防御空连接
+    int keepAlive = 3;
+    setsockopt(listen_fd, SOL_SOCKET, SO_KEEPALIVE, (void*)&keepAlive, sizeof(keepAlive));
+
+
     // 绑定
     // int bind(int sockfd, const struct sockaddr *addr,
     //          socklen_t addrlen);
@@ -225,28 +234,39 @@ void echo_error(int sock, int status_code)
 }
 
 // 7. 清理剩余首部信息
-void handle_hander(int sock)
+void handle_hander(int client, int epoll_fd)
 {
-    char buf[1024];
-    int ret = -1;
-    do
+    char line[1024];
+    int ret = noBlockRead(client, line, sizeof(line)-1);
+    if(ret < 0)
     {
-        ret = get_line(sock, buf, sizeof(buf));
-    } while(ret > 0 && strcmp(buf, "\n") != 0);
+        perror("read");
+    }
+    if(ret == 0)
+    {
+        printf("client quit !\n");
+        close(client);
+        epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client, NULL);
+        return ;
+    }
+    line[ret] = 0;
+    printf("\n=====================================\n");
+    printf("client say :\n%s\n", line);
+    printf("\n=====================================\n");
 }
 
 // 8. 返回状态信息
-void status_response(int sock, int status_code)
+void status_response(int sock, int epoll_fd, int status_code)
 {
-    handle_hander(sock);
+    handle_hander(sock, epoll_fd);
     switch(status_code)
     {
-        case 404:
-            echo_error(sock, status_code);
-            break;
-        case 503:
+    case 404:
+        echo_error(sock, status_code);
+        break;
+    case 503:
 
-        default: ;
+    default: ;
     }
 }
 
@@ -372,46 +392,26 @@ void service(int client, int epoll_fd)
 
         if(cgi_flag == 1)
         {
-            status_code = exe_cgi(client, method, resource_path, query_string);
+            status_code = exe_cgi(client, epoll_fd, method, resource_path, query_string);
         }
         else
         {
-
-            int ret = noBlockRead(client, line, sizeof(line)-1);
-            if(ret < 0)
-            {
-                status_code = 404;
-                perror("read");
-            }
-            if(ret == 0)
-            {
-                printf("client quit !\n");
-                close(client);
-                epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client, NULL);
-                return ;
-            }
-
-            line[ret] = 0;
-            printf("\n=====================================\n");
-            printf("client say :\n%s\n", line);
-            printf("\n=====================================\n");
-
+            handle_hander(client, epoll_fd);
             status_code = echo_www(client, resource_path, st.st_size);
         }
     }
-
     cout << "状态码 : " << status_code << endl;
     if(status_code != 200)
     {
-        status_response(client, status_code);
+        status_response(client, epoll_fd,  status_code);
     }
 }
 
 
 // cgi
-static int exe_cgi(int sock, char* method, char* resource_path, char* query_string)
+static int exe_cgi(int sock, int epoll_fd, char* method, char* resource_path, char* query_string)
 {
-    printf("进入 CGI \n");
+    printf("进入 cgi 程序 \n");
     // 环境变量父子进程都可以看见
     int content_length = -1;
     char method_env[MAX_SIZE/10];
@@ -421,7 +421,7 @@ static int exe_cgi(int sock, char* method, char* resource_path, char* query_stri
     // 如果是 get 方法, 就清理掉剩余的报头
     if(strcasecmp(method, "GET") == 0)
     {
-        handle_hander(sock);
+        handle_hander(sock, epoll_fd);
     }
     else
     {
