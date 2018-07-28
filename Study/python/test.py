@@ -4,6 +4,7 @@
 python 练习
 '''
 print '\n\n\n\n'
+print '\n\n\n\n'
 
 ## 类型
 #counter = 0
@@ -252,13 +253,143 @@ print '\n\n\n\n'
 # print id(a) == id(b)
 # print a is b # is 关键字
 # print type(a) == type(b)
-# # 内建函数 isinstance
+# # 内建函数 isinstance()
 # print isinstance(a, type('hehe'))
 
 # 类型工厂函数
 # 设计模式之工厂模式
+# a = raw_input("> ")
+# print int(a) + 10   # int() 工厂函数
+
+# python 不支持指针
+
+# a = 888888888888888888888888888888888888888888
+# print type(a) # long 类型 python2 才有
+# 
+# a = 3.14
+# print type(a) # python 只有一种浮点数类型 float
+
+# 数字和运算
+# a, b = divmod(10, 3) # 返回商和余数
+# print a, b
+# a = -1
+# print abs(a) # 计算绝对值
+# a = 3.1415926
+# print round(a, 3) # round() 对浮点数进行四舍五入 , 第二个参数为保留几位小数
+# print round(a, 6)
+# import math
+# print round(math.pi, 10)
+# print round(math.pi, 11)
+# print round(math.pi, 20) # 最多 11 位
+# a = 3.111111111111111111111111111111111111111111111
+# print round(a, 11)
+# print round(a, 12)
+
+# 条件和循环
+# python 使用缩进来匹配代码块
+# a = 10
+# b = 20
+# if a > b:
+#     print "hehe"
+# else:
+#     print "haha"
+# 
+# x, y, smaller = 3, 4, 1
+# if x < y:
+#     smaller = x
+# else:
+#     smaller = y
+# 条件表达式
+# smaller = x if x < y else y
+
+# else 还可以和 while, for 配合使用
+# 只会在循环条件不满足的时候执行 else, break 则不会执行else
+
+# 函数和可调用对象
+# def hello():
+#     print "hello" # 定义函数
+# 
+# hello() # 执行函数
+# 
+# def func1():
+#     def func2():
+#         print 'hehe'
+#     func2() #只能在 func1 中进行调用
+#     return func2
+# 
+# a = func1()
+# print a
+# a()
+
+# def hello(x):
+#     print x
+# hello(10)
+# hello('hehe')
+# hello([1,2,3])
+# hello({'a' : 1, 'b' : 2})
+# 
+# def add(x, y):
+#     return x + y
+# # print add(10, 'hehe')
+# print add(10, 20)
+# print add('haha', 'xixi')
+
+# 默认参数
+# def Hello(x = 100):
+#     print x
+# Hello()
+# 
+# def PrintPoint(x=0, y=0, z=0):
+#     print x, y, z
+# 
+# PrintPoint(10, 12, 14)
+# PrintPoint(x=100, z=100) # 关键字参数
+
+# sorted
+# a = [9, 5, 2, 7]
+# print sorted(a)
+# print sorted(a, reverse=True)
+# 
+# a = [9, -5, 2, 7]
+# def cmp(x, y):
+#     '根据实际需求自定义排序'
+#     if abs(x) < abs(y):
+#         return -1
+#     elif abs(x) > abs(y):
+#         return 1
+#     else:
+#         return 0
+# print sorted(a, cmp=cmp)
+# 
+# # 参数组 可变参数
+# def Log(prefix, *data): # 表示 data 是一个参数组
+#     "Log 打印一行日志, 支持多个字段, \t 分割"
+#     # split 字符串切分
+#     # strtok 字符串切分 http 请求行切分
+#     print prefix + '\t'.join(data) # join 把列表元组, 拼接为字符串
+# 
+# # 日志级别 CRITICAL ERROR WARNING INFO Notice
+# Log("[Notice]\t", 'id = 10', 'name = tom', 'score = 100')
+
+# ** 表示字典
+
+# def Log(prefix, **data):
+#     print prefix + '\t'.join(data.values())
+# 
+# Log("[Notice]\t", id = '10', name = 'tom', score = '100')
+
+# 函数重载 ?
+# python 不支持函数重载, 因为有更好的方案解决这个问题
 
 
+def func():
+    print '1'
+def func():
+    print '2'
+func()  # 这样后面的函数会覆盖前面的
+
+# 函数返回值
+# 没有返回值, 则返回 None 对象
 
 print '\n\n\n\n'
 print '\n\n\n\n'
