@@ -382,14 +382,127 @@ print '\n\n\n\n'
 # python 不支持函数重载, 因为有更好的方案解决这个问题
 
 
-def func():
-    print '1'
-def func():
-    print '2'
-func()  # 这样后面的函数会覆盖前面的
-
+# def func():
+#     print '1'
+# def func():
+#     print '2'
+# func()  # 这样后面的函数会覆盖前面的
+# 
 # 函数返回值
 # 没有返回值, 则返回 None 对象
+
+# 函数的内置属性
+# print dir("hello")
+
+# ================================================
+# Python 序列和字典
+# a = [1, 2, 3, 4, 5, 6, 7]
+# b = [7, 6, 5, 4, 3, 2, 1]
+# print id(a)
+# print id(b)
+# print 1 in a # 判断 1 是否在 a 中
+# print 9 in b # t : O(N)
+# print a + b  # 拼接列表 生成了一个新的对象, 原有对象没变
+# print a * 1000 # 重复操作 * 
+
+# 序列的切片操作
+# a = [1,2,3,4,5]
+# # print a[100]
+# print a[0:3]
+# print a[1:3]
+# print a[2:5]
+# print a[-2:0]
+# print a[::2] # 2 表示 "步长"
+# 
+# # 字符串翻转
+# a = 'abcdef'
+# print a[::-1]
+
+# def Find(input_list, x):
+#     for i in range(len(input_list)):
+#         if input_list[i] == x:
+#             return i
+#     return None
+# 
+# def Find(input_list, x):
+#     for i, item in enumerate(input_list):
+#         if item == x:
+#             return i
+#     return None
+# 
+# a = [1,2,3,4]
+# x = 3
+# print Find(a, x)
+
+# x = [1,2,3]
+# y = [4,5,6]
+# z = [7,8,9]
+# print zip(x, y, z) # 矩阵转置
+
+# 字符串
+# a = 'aaaaa'
+# # a[1] = 'b' # 字符串不可变
+# print a
+# b = 'x' + a[1:] # 要修改只能创建新的
+# print b
+# 
+# # 只适用于字符串的操作符
+# x = 1
+# print "x = %d" %x
+# 
+# x, y = 10, 20
+# print 'x=%d, y=%d\n' %(x, y)
+
+# 字符串转换大小写
+# a = 'hello, WORLD'
+# print a.upper()
+# print a.lower()
+
+# 列表
+# a = [1, 2, 3, 4]
+# a[1] = 100 # 列表可修改
+# print a
+# 
+# a.append(99) # 尾插
+# print a
+# a.remove(3)
+# print a
+# 
+# a = [1,2,3]
+# print a[::-1]
+# print a.reverse()
+# print a
+
+# 字典
+# a = dict((['x', 1], ['y', 2]))
+# print a['x']
+# print a
+# for i in a:
+#     print i, a[i]
+# 
+# print a.clear()
+# print a
+# print hash('abc')
+# print hash(())
+# print hash([1,2,3]) # 列表不可哈希
+
+# a = {
+#         'a' : 1,
+#         'b' : 2,
+#         'c' : 3,
+#     }
+# print a.keys()
+# print a.values()
+# print a.items()
+
+# set 集合
+a = set([1,2,3])
+b = set([2,3,4])
+print a & b
+print a | b
+print a ^ b
+
+
 
 print '\n\n\n\n'
 print '\n\n\n\n'
