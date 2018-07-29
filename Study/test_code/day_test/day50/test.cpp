@@ -128,7 +128,8 @@ int main(void)
 {
     int number=0;
     int r = 0;
-    cin >> number >> r ;
-    char string[25];
-    cout << itoa(number,string,r) << endl;
+    // cin >> number >> r ;
+    // char string[25];
+    // cout << itoa(number,string,r) << endl;
+    cout << ZeroNum(10) << endl;
 }
