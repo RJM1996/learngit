@@ -1,33 +1,27 @@
-#include <iostream>
-
 // n 为整数的个数
 // sum 和
 // arr: n 个整数的数组
-int MaxMethodSum(int n, int sum, int* arr)
-{
-    int ret = 0;
-    int count = 0;
-    for(int i=0; i<n; ++i)
-    {
-        ret += arr[i];
-        if(ret == sum)
-        {
-            count++;
-        }
-    }
-    return count;
-}
+#include<iostream>
+#include<vector>
+using namespace std;
 
-int main()
+int main() 
 {
-    int n = 0;
-    int sum = 0;
-    int* arr;
-    std::cin >> n >> sum;
-    for(int i=0; i<n; ++i)
-    {
-        std::cin >> arr[i];
-    }
-    int ret = MaxMethodSum(n, sum, arr);
-    std::cout << ret << std::endl;
+    int n, sum;
+    cin>>n>>sum;
+
+    vector<long long> a(sum+1);
+    vector<int> b(n);
+
+    for(int i=0; i<n; i++)
+        cin>>b[i];
+    a[0] = 1;
+
+    // 动态规划 ??? 
+    for (int i=0; i<n; i++)
+        for (int j=sum; j>=b[i]; j--)
+            a[j] += a[j-b[i]];
+
+    cout<<a[sum]<<endl;
+    return 0;
 }
