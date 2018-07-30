@@ -62,25 +62,3 @@ int main()
 	select_data();
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

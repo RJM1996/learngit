@@ -1,5 +1,5 @@
-main:ping.c
+ping:ping.c
 	gcc -o $@ $^
 
 clean:
-	rm -rf main
+	rm -rf ping
