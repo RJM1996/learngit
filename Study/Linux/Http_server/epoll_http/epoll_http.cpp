@@ -116,7 +116,7 @@ ssize_t noBlockRead(int fd, char* buf, int size)
 }
 
 // 4. 获取报头的每一行
-// 要把 \r -> \n || \r\n -> \n
+//    要把 \r -> \n || \r\n -> \n
 int get_line(int sock, char line[], int size)
 {
     int i = 0;
@@ -156,7 +156,7 @@ int get_line(int sock, char line[], int size)
                     }
                     else
                     {
-                        // 如果不是说明这一行已经完了, 把'\r'变为'\n'
+                        // 如果不是, 说明这一行已经完了, 把'\r'变为'\n'
                         ch = '\n';
                     }
                 }
@@ -171,6 +171,7 @@ int get_line(int sock, char line[], int size)
 // 5. 响应, 传回网页
 int echo_www(int sock, const char* resource_path, int size)
 {
+    // resource_path 中就是html文件的路径
     int fd = open(resource_path, O_RDONLY);
     if(fd < 0)
     {
@@ -178,19 +179,20 @@ int echo_www(int sock, const char* resource_path, int size)
         return 404;
     }
 
-    // 状态行
-    // 空行
-    // status_line, blank_line;
+    // 1. 根据 http 的规定, 先发送状态行
     // ssize_t send(int sockfd, const void *buf, size_t len, int flags);
     send(sock, status_line, strlen(status_line), 0);
 
+    // 2. 发送报文长度
     char len_buf[MAX_SIZE/4] = {0};
     // content_length = "Content-Length: %u\r\n"
     sprintf(len_buf, "Content-Length: %u\r\n", size);
     send(sock, len_buf, strlen(len_buf), 0);
 
+    // 3. 发送空行
     send(sock, blank_line, strlen(blank_line), 0);
 
+    // 4. 发送网页(正文)
     // ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
     // 在内核中, 两个文件描述符之间直接进行读写, 效率高
     ssize_t ret = sendfile(sock, fd, NULL, size);
@@ -206,7 +208,9 @@ int echo_www(int sock, const char* resource_path, int size)
 // 6. 回传错误信息
 void echo_error(int sock, int status_code)
 {
-    string _404_path = "webroot/error_code/404/404.html";
+    (void) status_code;
+    // 404 页面
+    string _404_path("webroot/error_code/404/404.html");
     int fd = open(_404_path.c_str(), O_RDONLY);
     if(fd < 0)
     {
@@ -214,12 +218,15 @@ void echo_error(int sock, int status_code)
         return ;
     }
 
+    // 1. 状态行
     char buf[MAX_SIZE/4];
     sprintf(buf, "HTTP 404 Not Found");
     send(sock, buf, strlen(buf), 0);
 
+    // 2. 空行
     send(sock, blank_line, strlen(blank_line), 0);
 
+    // 3. 正文
     // ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
     // 在内核中, 两个文件描述符之间直接进行读写, 效率高
     struct stat st;
@@ -250,9 +257,9 @@ void handle_hander(int client, int epoll_fd)
         return ;
     }
     line[ret] = 0;
-    printf("\n=====================================\n");
-    printf("client say :\n%s\n", line);
-    printf("\n=====================================\n");
+//    printf("=====================================\n");
+//    printf("client say :\n%s\n", line);
+//    printf("=====================================\n");
 }
 
 // 8. 返回状态信息
@@ -265,11 +272,11 @@ void status_response(int sock, int epoll_fd, int status_code)
         echo_error(sock, status_code);
         break;
     case 503:
-
-    default: ;
+        break;
+    default:
+        break;
     }
 }
-
 
 // 9, 正常客户端就绪, 开始服务
 void service(int client, int epoll_fd)
@@ -280,7 +287,7 @@ void service(int client, int epoll_fd)
     // 现在 client 里面存的就是浏览器的请求信息
     // 一行一行地提取浏览器的请求存到 buf 里面
     int ch_size = get_line(client, line, sizeof(line));
-    cout << "ch_size: " << ch_size << endl;
+    // cout << "ch_size: " << ch_size << endl;
     line[ch_size] = '\0';
     printf("请求行: %s", line);
 
@@ -293,7 +300,8 @@ void service(int client, int epoll_fd)
         method[i++] = line[j++];
     }
     method[i] = '\0';
-    cout << "请求方法 : " << method << endl;
+    printf("请求方法: %s\n", method);
+
     // 到这里就已经提取到了请求方法
     // 为了避免请求方法之后不止一个空格, 需要把后面的空格都跳过
     while(j < sizeof(line) && isspace(line[j]))
@@ -309,24 +317,24 @@ void service(int client, int epoll_fd)
         i++, j++;
     }
     url[i] = '\0';
-    cout << "请求资源路径 : " << url << endl;
+    printf("请求资源路径: %s\n", url);
+
     // 到这里 url 也提取到了
     // 版本号暂时忽略不提取, 默认 HTTP/1.0
     // 接下来判断请求方法, 因为本服务器仅支持 get 和 post
     // int strcasecmp(const char *s1, const char *s2); 忽略大小写的字符串比较
     if(strcasecmp(method, "GET") != 0 && strcasecmp(method, "POST") != 0)
     {
-        status_code = 404;
-        // 如果请求方法不是 get || post, 就返回错误码, 关闭连接.
         printf("请求方法不是 GET 和 POST !\n");
-        // 关闭打开的文件
+        status_code = 404;
     }
+
     // 到这里肯定是 GET 或 POST
     // CGI: 
     //     1, GET方法 带参数 是CGI, 参数在地址栏
     //     2, POST方法都是CGI, 参数在消息正文, 敏感信息的参数传递都用POST方法
     int cgi_flag = 0;
-    char* query_string = NULL;
+    char* query_string = NULL; // 参数字符串
     if(strcasecmp(method, "POST") == 0)
     {
         cgi_flag = 1;
@@ -350,14 +358,18 @@ void service(int client, int epoll_fd)
             query_string++; // 遍历url
         }
     }
+
     char resource_path[MAX_SIZE];
-    sprintf(resource_path, "webroot%s", url);
+    if(strcmp(url, "") != 0)
+    {
+        sprintf(resource_path, "webroot%s", url);
+    }
     if(resource_path[strlen(resource_path)-1] == '/')
     {
         strcat(resource_path, "index.html");
     }
-    cout << "请求资源路径 : " << resource_path << endl;
-    cout << "query_string : " << query_string << endl;
+    printf("请求资源: %s\n", resource_path);
+    printf("参数: %s\n", query_string);
 
     // int stat(const char *file_name, struct stat *buf);
     // 通过文件名filename获取文件信息，并保存在buf所指的结构体stat中
@@ -365,10 +377,8 @@ void service(int client, int epoll_fd)
     struct stat st;
     if(stat(resource_path, &st) < 0)
     {
-        status_code = 404;
-        // 文件不存在
         printf("文件不存在 !\n");
-        // 关闭打开的文件
+        status_code = 404;
     }
     else
     {
@@ -400,18 +410,18 @@ void service(int client, int epoll_fd)
             status_code = echo_www(client, resource_path, st.st_size);
         }
     }
-    cout << "状态码 : " << status_code << endl;
+    printf("状态码: %d\n", status_code);
     if(status_code != 200)
     {
         status_response(client, epoll_fd,  status_code);
     }
 }
 
-
 // cgi
 static int exe_cgi(int sock, int epoll_fd, char* method, char* resource_path, char* query_string)
 {
-    printf("进入 cgi 程序 \n");
+    printf("运行 CGI 程序\n");
+
     // 环境变量父子进程都可以看见
     int content_length = -1;
     char method_env[MAX_SIZE/10];
@@ -442,6 +452,7 @@ static int exe_cgi(int sock, int epoll_fd, char* method, char* resource_path, ch
             return 404;
         }
     }
+    printf("正文长度: %d\n", content_length);
 
     // 发送状态行和空行
     send(sock, status_line, strlen(status_line), 0);

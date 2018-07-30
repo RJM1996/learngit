@@ -1,11 +1,3 @@
-/*================================================================
-
-# File Name: httpServer.c
-# Author: rjm
-# mail: rjm96@foxmail.com
-# Created Time: 2018年06月07日 星期四 11时57分25秒
-
-================================================================*/
 
 #include "httpServer.h"
 
@@ -64,7 +56,8 @@ int get_line(int sock, char line[], int size)
 
 void echo_error(int sock, int status_code)
 {
-    char* _404_path = "webroot/error_code/404/404.html";
+    (void) status_code;
+    const char* _404_path = "webroot/error_code/404/404.html";
     int fd = open(_404_path, O_RDONLY);
     if(fd < 0)
     {
@@ -101,8 +94,9 @@ void status_response(int sock, int status_code)
             echo_error(sock, status_code);
             break;
         case 503:
-
-        default: ;
+            break;
+        default:
+            break;
     }
 }
 
@@ -116,9 +110,6 @@ int echo_www(int sock, const char* resource_path, int size)
         return 404;
     }
 
-    // 状态行
-    // 空行
-    // status_line, blank_line;
     // ssize_t send(int sockfd, const void *buf, size_t len, int flags);
     send(sock, status_line, strlen(status_line), 0);
 
@@ -153,7 +144,8 @@ void handle_hander(int sock)
 
 static int exe_cgi(int sock, char* method, char* resource_path, char* query_string)
 {
-    printf("进入 CGI \n");
+    printf("运行 CGI 程序 ... \n");
+
     // 环境变量父子进程都可以看见
     int content_length = -1;
     char method_env[MAX_SIZE/10];
@@ -179,6 +171,7 @@ static int exe_cgi(int sock, char* method, char* resource_path, char* query_stri
                 content_length = atoi(&buf[16]);
             }
         } while(ret > 0 && strcmp(buf, "\n") != 0);
+
         if(content_length == -1)
         {
             return 404;
@@ -281,21 +274,6 @@ void* handle_request(void* arg)
     int sock = *socket;
     char line[MAX_SIZE];
     int status_code = 200; // 状态码
-
-#if 0
-    ssize_t size = read(sock, line, sizeof(line)-1);
-    if(size < 0)
-    {
-        perror("read");
-        close(sock);
-    }
-    else if(size == 0)
-    {
-        close(sock);
-    }
-    line[size] = 0;
-    printf("%s", line);
-#endif
 
     // 一行行提取请求信息
     int ch_size = get_line(sock, line, sizeof(line));
@@ -427,11 +405,9 @@ end:
     {
         status_response(sock, status_code);
     }
-
     close(sock);
     return NULL;
 }
-
 
 int startUp(int port)
 {
@@ -452,6 +428,7 @@ int startUp(int port)
         perror("socket");
         return 3;
     }
+
     int opt = 1;
     setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 

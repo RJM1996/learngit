@@ -61,6 +61,7 @@ int main(int argc, char* argv[])
             else
             {
                 // 说明是正常客户端的读事件就绪, 开始服务
+                printf("开始服务...\n");
                 service(evs[i].data.fd, epfd);
             }
         } // loop 1 end

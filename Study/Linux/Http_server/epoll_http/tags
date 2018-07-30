@@ -39,5 +39,5 @@ operator ==	webroot/cgi/date/date.h	/^        bool operator==(const Date& x)$/;"
 service	epoll_http.cpp	/^void service(int client, int epoll_fd)$/;"	f
 setNoBlock	epoll_http.cpp	/^void setNoBlock(int fd)$/;"	f
 status_line	epoll_http.cpp	/^const char* status_line = "HTTP\/1.0 200 OK\\r\\n";                                                                   $/;"	v
-status_response	epoll_http.cpp	/^void status_response(int sock, int status_code)$/;"	f
+status_response	epoll_http.cpp	/^void status_response(int sock, int epoll_fd, int status_code)$/;"	f
 ~Date	webroot/cgi/date/date.h	/^        ~Date()$/;"	f	class:Date
