@@ -242,8 +242,6 @@ float diftime(struct timeval* end, struct timeval* begin)
            (end->tv_usec - begin->tv_usec) / 1000.0;
 }
 
-
-
 int main(int argc, char* argv[])
 {
     // struct hostent* p= gethostbyname("www.sust.xin");
