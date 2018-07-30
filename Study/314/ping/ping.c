@@ -17,6 +17,9 @@
 
 #define DATA_LEN 56
 
+unsigned short chksum(unsigned short* addr, int len);
+float diftime(struct timeval* end, struct timeval* begin);
+
 #if 0
 struct ip
 {
@@ -135,7 +138,52 @@ int pack(int num, pid_t pid)
     picmp->icmp_id = pid;
     picmp->icmp_seq = htons(num);
     gettimeofday((struct timeval*)picmp->icmp_data, NULL);
+    picmp->icmp_cksum = chksum((unsigned short*)sendbuf, DATA_LEN + 8);
     return DATA_LEN + 8;
+}
+
+#if 0
+struct ip
+  {
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+    unsigned int ip_hl:4;		/* header length */
+    unsigned int ip_v:4;		/* version */
+#endif
+#if __BYTE_ORDER == __BIG_ENDIAN
+    unsigned int ip_v:4;		/* version */
+    unsigned int ip_hl:4;		/* header length */
+#endif
+    u_int8_t ip_tos;			/* type of service */
+    u_short ip_len;			/* total length */
+    u_short ip_id;			/* identification */
+    u_short ip_off;			/* fragment offset field */
+#define	IP_RF 0x8000			/* reserved fragment flag */
+#define	IP_DF 0x4000			/* dont fragment flag */
+#define	IP_MF 0x2000			/* more fragments flag */
+#define	IP_OFFMASK 0x1fff		/* mask for fragmenting bits */
+    u_int8_t ip_ttl;			/* time to live */
+    u_int8_t ip_p;			/* protocol */
+    u_short ip_sum;			/* checksum */
+    struct in_addr ip_src, ip_dst;	/* source and dest address */
+  };
+#endif
+
+// 解包
+void unpack(int num, pid_t pid, struct sockaddr_in from)
+{
+    (void) num;
+    (void) pid;
+    struct timeval end;
+    gettimeofday(&end, NULL);
+    struct ip* pip = (struct ip*)recvbuf;
+    struct icmp* picmp = (struct icmp*)(recvbuf + (pip->ip_hl << 2));
+    float d = diftime(&end, (struct timeval*)picmp->icmp_data);
+    printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms\n",
+           DATA_LEN + 8, 
+           inet_ntoa(from.sin_addr), 
+           ntohs(picmp->icmp_seq), 
+           pip->ip_ttl,
+           d);
 }
 
 // 发送数据包
@@ -144,13 +192,20 @@ int pack(int num, pid_t pid)
 // addr: 发送的目标机器
 void send_packet(int sfd, pid_t pid, struct sockaddr_in addr)
 {
-    sendnum++;
+    memset(sendbuf, 0x00, sizeof(sendbuf));
     int ret = pack(sendnum, pid); // 组包
     sendto(sfd, sendbuf, ret, 0, (struct sockaddr*)&addr, sizeof(addr));
+    sendnum++;
 }
 // 接收数据包
 void recv_packet(int sfd, pid_t pid)
 {
+    memset(recvbuf, 0x00, sizeof(recvbuf));
+    struct sockaddr_in from;
+    socklen_t len = sizeof(from);
+    recvfrom(sfd, recvbuf, 1024, 0, (struct sockaddr*)&from, &len);
+    recvnum++;
+    unpack(sfd, pid, from);
 
 }
 
@@ -179,7 +234,7 @@ unsigned short chksum(unsigned short* addr, int len)
 }
 
 // 往返时间差
-float dirtime(struct timeval* end, struct timeval* begin)
+float diftime(struct timeval* end, struct timeval* begin)
 {
     // end->tv_sec
     // end->tv_usec
@@ -205,7 +260,7 @@ int main(int argc, char* argv[])
     }
 
     struct sockaddr_in addr;
-    struct hostent* phost;
+    struct hostent* phost = NULL;
 
     addr.sin_addr.s_addr = inet_addr(argv[1]);
     if(addr.sin_addr.s_addr == INADDR_NONE)
@@ -225,6 +280,7 @@ int main(int argc, char* argv[])
     // 1. 先发送第一句
     printf("PING %s (%s) %d bytes of data.\n", argv[1], inet_ntoa(addr.sin_addr), DATA_LEN);
 
+    addr.sin_family = AF_INET;
     int sfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
     if(sfd == -1)
     {
@@ -239,6 +295,12 @@ int main(int argc, char* argv[])
         recv_packet(sfd, pid);
         sleep(1);
     }
+
+    // 按 ctrl-c 打印统计信息
+    //
+    // --- www.a.shifen.com ping statistics ---
+    // 4 packets transmitted, 4 received, 0% packet loss, time 4182ms
+    // rtt min/avg/max/mdev = 56.238/58.537/60.790/1.617 ms
     
     
 
