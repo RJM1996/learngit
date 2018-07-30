@@ -16,10 +16,10 @@ int getSize(int* data)
     return sizeof(data);
 }
 
-//在杨氏矩阵中查找一个数
-//从右上角那个数开始找, 如果小于num
-//第一行就不可能有 num 了
-//于是除去第一行,继续从右上角找
+// 1. 在杨氏矩阵中查找一个数
+// 从右上角那个数开始找, 如果小于num
+// 第一行就不可能有 num 了
+// 于是除去第一行,继续从右上角找
 int findNumInYangTableau(int **arr, int num)
 {
     int rows = sizeof(arr) / sizeof(arr[0]);
