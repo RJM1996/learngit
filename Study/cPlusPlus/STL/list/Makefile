@@ -1,6 +1,6 @@
 .PHONY:clean
 
-main:vector.cpp
+main:list.cpp
 	g++ $^ -o $@ -g
 
 clean:
