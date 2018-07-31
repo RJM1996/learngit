@@ -3,8 +3,7 @@
 '''
 python 练习
 '''
-print '\n\n\n\n'
-print '\n\n\n\n'
+print '\n'
 
 ## 类型
 #counter = 0
@@ -496,13 +495,81 @@ print '\n\n\n\n'
 # print a.items()
 
 # set 集合
-a = set([1,2,3])
-b = set([2,3,4])
-print a & b
-print a | b
-print a ^ b
+# a = set([1,2,3])
+# b = set([2,3,4])
+# print a & b
+# print a | b
+# print a ^ b
+
+# Python 文件操作
+
+# 打开 - 读写 - 关闭
+f = open("text.txt", 'w')
+# print type(f)
+# print f
+
+# 每次读一行
+# for line in f:
+#     print line,
+
+# 一次读完, 放到内存中, 返回一个列表
+# lines = f.readlines()
+# for line in lines:
+#     print line,
+# 
+# # 返回生成器
+# print f.xreadlines()
+
+# 写文件
+
+# f.write("111111111111")
+# f.writelines(['aaa\n', 'bbb\n', 'ccc\n'])
+# # 缓冲区, 减少 I/O 访问次数
+# print f.__doc__
+# # 0 无缓冲 1 行缓冲 >1 全缓冲
+# 
+# # 操作文件指针
+# # seek tell
+# # 内建属性
+# print f.closed   # 是否已经关闭
+# print f.encoding # None 系统默认编码
+# f.close() # 内置垃圾回收机制, 可能不会及时运行, 还是自己关闭比较好
+
+# with 语句 上下文管理器
+# with open("./text.txt") as f:
+#     print f.readlines()
+
+# 文件系统的基础操作
+# 创建文件目录, 更改重命名等
+
+# import os.path
+# path = '/home/admin/learngit'
+# print os.path.basename(path)
+# print os.path.dirname(path)
+# print os.path.split(path)
+# print os.path.splitext(path)
+
+# 操作文件
+# walk 遍历一个目录的所有目录和文件
+# import os
+# for basedir, dirnames, filenames in os.walk(path):
+#     # print "basedir: ",  basedir
+#     # print "dirnames: ", dirnames
+#     # print "filenames: ", filenames
+#     for filename in filenames:
+#         print os.path.join(basedir, filename)
+
+# 简易 ls 命令
+# import os
+# import sys
+# if len(sys.argv) < 2:
+#     path = '.'
+# else:
+#     path = sys.argv[1]
+# for f in os.listdir(path):
+#     print f
 
 
 
-print '\n\n\n\n'
-print '\n\n\n\n'
+
+print '\n'

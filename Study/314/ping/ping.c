@@ -16,6 +16,11 @@
 #include <string.h>
 
 #define DATA_LEN 56
+float arr[4];
+int count = 0;
+float sum = 0.0;
+float max = 0.0;
+float min = 0.0;
 
 unsigned short chksum(unsigned short* addr, int len);
 float diftime(struct timeval* end, struct timeval* begin);
@@ -169,7 +174,7 @@ struct ip
 #endif
 
 // 解包
-void unpack(int num, pid_t pid, struct sockaddr_in from)
+float unpack(int num, pid_t pid, struct sockaddr_in from)
 {
     (void) num;
     (void) pid;
@@ -178,12 +183,14 @@ void unpack(int num, pid_t pid, struct sockaddr_in from)
     struct ip* pip = (struct ip*)recvbuf;
     struct icmp* picmp = (struct icmp*)(recvbuf + (pip->ip_hl << 2));
     float d = diftime(&end, (struct timeval*)picmp->icmp_data);
+
     printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms\n",
            DATA_LEN + 8, 
            inet_ntoa(from.sin_addr), 
            ntohs(picmp->icmp_seq), 
            pip->ip_ttl,
            d);
+    return d;
 }
 
 // 发送数据包
@@ -198,15 +205,14 @@ void send_packet(int sfd, pid_t pid, struct sockaddr_in addr)
     sendnum++;
 }
 // 接收数据包
-void recv_packet(int sfd, pid_t pid)
+float recv_packet(int sfd, pid_t pid)
 {
     memset(recvbuf, 0x00, sizeof(recvbuf));
     struct sockaddr_in from;
     socklen_t len = sizeof(from);
     recvfrom(sfd, recvbuf, 1024, 0, (struct sockaddr*)&from, &len);
     recvnum++;
-    unpack(sfd, pid, from);
-
+    return unpack(sfd, pid, from);
 }
 
 // 校验和的算法
@@ -276,7 +282,7 @@ int main(int argc, char* argv[])
     // 到这里就把用户 ping 的 IP 地址得到了
     
     // 1. 先发送第一句
-    printf("PING %s (%s) %d bytes of data.\n", argv[1], inet_ntoa(addr.sin_addr), DATA_LEN);
+    printf("PING %s (%s) %d(84) bytes of data.\n", argv[1], inet_ntoa(addr.sin_addr), DATA_LEN);
 
     addr.sin_family = AF_INET;
     int sfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
@@ -286,12 +292,20 @@ int main(int argc, char* argv[])
     }
 
     pid_t pid = getpid();
-    while(1)
+    while(count != 4)
     {
+        sleep(1);
         // 循环发送接收数据
         send_packet(sfd, pid, addr);
-        recv_packet(sfd, pid);
-        sleep(1);
+        arr[count] = recv_packet(sfd, pid);
+        min = arr[count];
+        // printf("min = %.3f\n", min);
+        if(arr[count] > max)
+            max = arr[count];
+        if(arr[count] < min)
+            min = arr[count];
+        sum += arr[count];
+        ++count;
     }
 
     // 按 ctrl-c 打印统计信息
@@ -299,10 +313,9 @@ int main(int argc, char* argv[])
     // --- www.a.shifen.com ping statistics ---
     // 4 packets transmitted, 4 received, 0% packet loss, time 4182ms
     // rtt min/avg/max/mdev = 56.238/58.537/60.790/1.617 ms
-    
-    
-
-
+    printf("\n --- %s ping statistics --- \n", argv[1]);
+    printf(" 4 packets transmitted, 4 received, 0 packet loss, time %d ms\n", (int)sum);
+    printf(" rtt min/avg/max/mdev = %.3f/%.3f/%.3f/1.617 ms\n", min, sum/4, max);
 
     // int sfd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
     // int sfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
