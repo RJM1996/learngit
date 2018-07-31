@@ -569,7 +569,62 @@ f = open("text.txt", 'w')
 # for f in os.listdir(path):
 #     print f
 
+# 异常处理
+# print 'hello, world'
+# a = [1, 2, 3]
+# print a[100] # 索引错误
+# open('aaa')  # IO  错误
 
+# 处理异常
+# a = [1,2,3]
+# try:
+#     print a[100]
+# except IndexError as e:
+#     # expect 语句需要知道当前处理的异常类型
+#     # e 是指前面抛出的异常对象的引用
+#     print e
+#     print type(e)
+# print 'hehe'
 
+# try:
+#     open('aaa')  # IO  错误
+#     a = [1,2,3]
+#     print a[1]
+# except IndexError as e:
+#     print e
+# except IOError as e:
+#     print e
+# else:
+#     print 'hehe, code run ok'
+
+# try:
+#     open('aaa')  # IO  错误
+#     a = [1,2,3]
+#     print a[100]
+# except Exception as e: # Exception 异常基类 不推荐这种方法
+#     print 'error'
+#     print e
+# finally:
+#     无论是否触发异常, 都会执行该逻辑, 用于收尾工作
+#     print 'hehehe'
+# 重试机制
+
+# 抛出异常
+# raise
+# def divide(x, y):
+#     if y == 0:
+#         raise Exception('divide zero')
+#         # return 0, False
+#     # return x / y, True
+#     return x / y
+# 
+# divide(2, 0)
+
+# 内置异常类
+# while True:
+#     print 'hehe'
+#     # KeyboardInterrupt  # ctrl-c
+
+    
 
 print '\n'

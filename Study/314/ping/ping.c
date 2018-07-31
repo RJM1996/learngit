@@ -11,6 +11,7 @@
 #include <netinet/ip_icmp.h>
 #include <netpacket/packet.h>
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,7 +21,7 @@ float arr[4];
 int count = 0;
 float sum = 0.0;
 float max = 0.0;
-float min = 0.0;
+float min = 10000.0;
 
 unsigned short chksum(unsigned short* addr, int len);
 float diftime(struct timeval* end, struct timeval* begin);
@@ -298,7 +299,7 @@ int main(int argc, char* argv[])
         // 循环发送接收数据
         send_packet(sfd, pid, addr);
         arr[count] = recv_packet(sfd, pid);
-        min = arr[count];
+        printf("arr[%d] = %.3f\n", count,  arr[count]);
         // printf("min = %.3f\n", min);
         if(arr[count] > max)
             max = arr[count];
@@ -313,9 +314,17 @@ int main(int argc, char* argv[])
     // --- www.a.shifen.com ping statistics ---
     // 4 packets transmitted, 4 received, 0% packet loss, time 4182ms
     // rtt min/avg/max/mdev = 56.238/58.537/60.790/1.617 ms
+    float avg = sum/4; // 计算平均值
+    // 计算方差
+    float mdev = ( 
+        pow((arr[0] - avg) , 2) + 
+        pow((arr[1] - avg) , 2) +
+        pow((arr[2] - avg) , 2) +
+        pow((arr[3] - avg) , 2) 
+        ) / 4 ;
     printf("\n --- %s ping statistics --- \n", argv[1]);
     printf(" 4 packets transmitted, 4 received, 0 packet loss, time %d ms\n", (int)sum);
-    printf(" rtt min/avg/max/mdev = %.3f/%.3f/%.3f/1.617 ms\n", min, sum/4, max);
+    printf(" rtt min/avg/max/mdev = %.3f/%.3f/%.3f/%.3f ms\n", min, avg, max, mdev);
 
     // int sfd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
     // int sfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
