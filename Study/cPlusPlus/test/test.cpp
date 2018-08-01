@@ -498,6 +498,23 @@ void test_vector()
     print(v1);
 }
 
+// 1/1+2 + 1/1+2+3 + 1/1+2+3+4 + ... + 1/1+2+3+ ... +10
+float sum(float x)
+{
+    float fenmu = 1;
+    float sum = 1/fenmu;
+ //   cout << "fenmu: " << fenmu << endl;
+ //   cout << "sum: " << sum << endl;
+    for(int i=fenmu+1; i<=x; i++)
+    {
+        fenmu += i;
+ //       cout << "fenmu: " << fenmu << endl;
+        sum += 1.0/fenmu;
+ //       cout << "sum: " << sum << endl;
+    }
+    return sum;
+}
+
 int main()
 {
     // Test01();
@@ -512,6 +529,7 @@ int main()
     // Test06();
     // Test07();
     // Test09();
-    test_vector();
+    // test_vector();
+    cout << sum(10) << endl;
     return 0;
 }
