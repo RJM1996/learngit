@@ -299,7 +299,7 @@ int main(int argc, char* argv[])
         // 循环发送接收数据
         send_packet(sfd, pid, addr);
         arr[count] = recv_packet(sfd, pid);
-        printf("arr[%d] = %.3f\n", count,  arr[count]);
+        // printf("arr[%d] = %.3f\n", count,  arr[count]);
         // printf("min = %.3f\n", min);
         if(arr[count] > max)
             max = arr[count];
@@ -316,14 +316,14 @@ int main(int argc, char* argv[])
     // rtt min/avg/max/mdev = 56.238/58.537/60.790/1.617 ms
     float avg = sum/4; // 计算平均值
     // 计算方差
-    float mdev = ( 
+    float mdev = sqrtf( ( 
         pow((arr[0] - avg) , 2) + 
         pow((arr[1] - avg) , 2) +
         pow((arr[2] - avg) , 2) +
         pow((arr[3] - avg) , 2) 
-        ) / 4 ;
+        ) / 4 ) ;
     printf("\n --- %s ping statistics --- \n", argv[1]);
-    printf(" 4 packets transmitted, 4 received, 0 packet loss, time %d ms\n", (int)sum);
+    printf(" 4 packets transmitted, 4 received, 0%% packet loss, time %d ms\n", (int)sum);
     printf(" rtt min/avg/max/mdev = %.3f/%.3f/%.3f/%.3f ms\n", min, avg, max, mdev);
 
     // int sfd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
