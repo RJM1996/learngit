@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <mysql.h>
+#include <unistd.h>
+#include </usr/include/mysql/mysql.h>
 
 void select_data()
 {
 	MYSQL *mysql_fd = mysql_init(NULL);
 	if(mysql_real_connect(mysql_fd, "127.0.0.1", "root",\
-				"", "31_class", 3306, NULL, 0) == NULL){
+				"4321", "http", 3306, NULL, 0) == NULL){
 		printf("connect failed!\n");
 		return;
 	}
@@ -15,7 +16,7 @@ void select_data()
 
 	char sql[1024];
 
-	sprintf(sql, "SELECT * FROM student_info");
+	sprintf(sql, "SELECT * FROM user");
 	mysql_query(mysql_fd, sql);
 
 	MYSQL_RES *res = mysql_store_result(mysql_fd);

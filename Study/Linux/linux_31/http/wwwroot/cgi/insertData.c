@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <mysql.h>
+#include <unistd.h>
+#include </usr/include/mysql/mysql.h>
 
 void instert_data(char *name, char *sex, char *phone)
 {
 	MYSQL *mysql_fd = mysql_init(NULL);
 	if(mysql_real_connect(mysql_fd, "127.0.0.1", "root",\
-				"", "31_class", 3306, NULL, 0) == NULL){
+				"4321", "http", 3306, NULL, 0) == NULL){
 		printf("connect failed!\n");
 		return;
 	}
@@ -15,7 +16,7 @@ void instert_data(char *name, char *sex, char *phone)
 
 	char sql[1024];
 
-	sprintf(sql, "INSERT INTO student_info (name, sex, phone) VALUES (\"%s\", \"%s\", \"%s\")", name, sex, phone);
+	sprintf(sql, "INSERT INTO user (name, sex, phone) VALUES (\"%s\", \"%s\", \"%s\")", name, sex, phone);
 
 	printf("sql : %s\n", sql);
 

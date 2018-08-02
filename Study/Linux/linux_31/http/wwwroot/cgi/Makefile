@@ -1,6 +1,6 @@
 ROOT=$(shell pwd)
-INCLUDE=-I$(ROOT)/../../lib/include
-LIB=-L$(ROOT)/../../lib/lib
+INCLUDE=-I/usr/include/mysql
+LIB=-L/usr/lib64/mysql
 LIB_NAME=-lmysqlclient -lpthread
 LD_FLAG=#-static
 
