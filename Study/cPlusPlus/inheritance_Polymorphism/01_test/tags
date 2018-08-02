@@ -1,0 +1,22 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Display	test.cpp	/^    void Display()$/;"	f	class:Person
+DisplayNum	test.cpp	/^    void DisplayNum()$/;"	f	class:Student
+Person	test.cpp	/^    Person(const Person& p)$/;"	f	class:Person
+Person	test.cpp	/^    Person(string t_name = "", int t_id = 1234, int t_age = 18)$/;"	f	class:Person
+Person	test.cpp	/^class Person $/;"	c	file:
+Student	test.cpp	/^    Student (string t_name, int t_age, int t_id, int s_id)$/;"	f	class:Student
+Student	test.cpp	/^    Student& (const Student& s)$/;"	f	class:Student
+Student	test.cpp	/^class Student : public Person$/;"	c	file:
+m_age	test.cpp	/^    int m_age;$/;"	m	class:Person	file:
+m_id	test.cpp	/^    int m_id;$/;"	m	class:Person	file:
+m_name	test.cpp	/^    string m_name;$/;"	m	class:Person	file:
+m_num	test.cpp	/^    int m_num;$/;"	m	class:Student	file:
+main	test.cpp	/^int main()$/;"	f
+operator =	test.cpp	/^    Person& operator= (const Person& p)$/;"	f	class:Person
+test01	test.cpp	/^void test01()$/;"	f
+~Person	test.cpp	/^    ~Person()$/;"	f	class:Person

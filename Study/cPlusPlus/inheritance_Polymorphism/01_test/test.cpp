@@ -64,16 +64,6 @@ class Student : public Person
 {
 public:
     // 构造
-    Student (string t_name, int t_age, int t_id, int s_id)
-        :Person(t_name, t_age, t_id)
-        ,m_num(s_id)
-    {}
-
-    // 拷贝构造
-    Student& (const Student& s)
-        :Person(s)
-        ,m_id(s.m_id)
-    {}
 
     void DisplayNum()
     {
