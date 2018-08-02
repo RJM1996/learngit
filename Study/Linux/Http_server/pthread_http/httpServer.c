@@ -66,13 +66,16 @@ void echo_error(int sock, int status_code)
     }
 
     char buf[MAX_SIZE/4];
+    memset(buf, 0, sizeof(buf));
+
     sprintf(buf, "HTTP 404 Not Found");
     send(sock, buf, strlen(buf), 0);
 
-    send(sock, blank_line, strlen(blank_line), 0);
+    //send(sock, blank_line, strlen(blank_line), 0);
 
     // ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
     // 在内核中, 两个文件描述符之间直接进行读写, 效率高
+    
     struct stat st;
     stat(_404_path, &st);
     ssize_t ret = sendfile(sock, fd, NULL, st.st_size);

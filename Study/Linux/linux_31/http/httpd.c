@@ -11,6 +11,7 @@
 #include <arpa/inet.h>
 #include <signal.h>
 #include <pthread.h>
+#include <ctype.h>
 
 #define MAX 1024
 #define HOME_PAGE "index.html"
@@ -285,6 +286,7 @@ static void *handler_request(void *arg)
 		i++, j++;
 	}
 	url[i] = '\0';
+    printf("url: %s\n", url);
 
 	//url
 	if(strcasecmp(method, "GET")==0){
@@ -325,7 +327,7 @@ static void *handler_request(void *arg)
 			errCode=exe_cgi(sock, path, method, query_string);
 		}
 		else{
-			printf("method: %s,path: %s\n",method,path);
+			printf("method: %s \npath: %s\nquery_string: %s\n",method,path,query_string);
 			// method[GET, POST], cgi[0|1], url[], query_String[NULL|arg]
 			echo_www(sock, path, st.st_size, &errCode);
 		}

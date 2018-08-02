@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,60 +7,73 @@
 
 void instert_data(char *name, char *sex, char *phone)
 {
-	MYSQL *mysql_fd = mysql_init(NULL);
-	if(mysql_real_connect(mysql_fd, "127.0.0.1", "root",\
-				"4321", "http", 3306, NULL, 0) == NULL){
-		printf("connect failed!\n");
-		return;
-	}
-	printf("connect mysql success!\n");
+    MYSQL *mysql_fd = mysql_init(NULL);
+    if(mysql_real_connect(mysql_fd, "127.0.0.1", "root", \
+                          "4321", "http", 3306, NULL, 0) == NULL)
+    {
+        printf("connect failed!\n");
+        return;
 
-	char sql[1024];
+    }
+    printf("connect mysql success!\n");
 
-	sprintf(sql, "INSERT INTO user (name, sex, phone) VALUES (\"%s\", \"%s\", \"%s\")", name, sex, phone);
+    char sql[1024];
 
-	printf("sql : %s\n", sql);
+    sprintf(sql, "INSERT INTO user (name, sex, phone) VALUES (\"%s\", \"%s\", \"%s\")", name, sex, phone);
 
-	//const char *sql = "INSERT INTO student_info (name, sex, phone) VALUES (\"zhangsan\", \"man\", \"12345678901\")";
+    printf("sql : %s\n", sql);
 
-	mysql_query(mysql_fd, sql);
+    //const char *sql = "INSERT INTO student_info (name, sex, phone) VALUES (\"zhangsan\", \"man\", \"12345678901\")";
 
-	mysql_close(mysql_fd);
+    if(mysql_query(mysql_fd, sql) != 0)
+    {
+        printf("<h3>插入失败</h3>\n");
+    }
+
+    mysql_close(mysql_fd);
+
 }
 
 int main()
 {
-	char data[1024];
-	if(getenv("METHOD")){
-		if(strcasecmp("GET", getenv("METHOD")) == 0){
-			strcpy(data, getenv("QUERY_STRING"));
-		}else{
-			int content_length = atoi(getenv("CONTENT_LENGTH"));
-			int i = 0;
-			for(; i < content_length; i++){
-				read(0, data+i, 1);
-			}
-			data[i] = 0;
-		}
-	}
+    printf("<meta charset=utf-8>");
+    char data[1024];
+    if(getenv("METHOD"))
+    {
+        if(strcasecmp("GET", getenv("METHOD")) == 0)
+        {
+            strcpy(data, getenv("QUERY_STRING"));
+        }
+        else
+        {
+            int content_length = atoi(getenv("CONTENT_LENGTH"));
+            int i = 0;
+            for(; i < content_length; i++)
+            {
+                read(0, data + i, 1);
+            }
+            data[i] = 0;
+        }
+    }
 
-	printf("arg: %s\n", data);
+    printf("arg: %s\n", data);
 
-	//name=""&sex=""&phone=""
-	char *name;
-	char *sex;
-	char *phone;
+    //name=""&sex=""&phone=""
+    char *name;
+    char *sex;
+    char *phone;
 
-	strtok(data, "=&");
-	name = strtok(NULL, "=&");
-	strtok(NULL, "=&");
-	sex = strtok(NULL, "=&");
-	strtok(NULL, "=&");
-	phone = strtok(NULL, "=&");
+    strtok(data, "=&");
+    name = strtok(NULL, "=&");
+    strtok(NULL, "=&");
+    sex = strtok(NULL, "=&");
+    strtok(NULL, "=&");
+    phone = strtok(NULL, "=&");
 
-	//sscanf(data, "name=%s&sex=%s&phone=%s", name, sex, phone);
+    //sscanf(data, "name=%s&sex=%s&phone=%s", name, sex, phone);
 
-	//printf("client version: %s\n", mysql_get_client_info());
-	instert_data(name, sex, phone);
-	return 0;
+    //printf("client version: %s\n", mysql_get_client_info());
+    printf("name: %s\n sex: %s\n phone: %s\n", name, sex, phone);
+    instert_data(name, sex, phone);
+    return 0;
 }

@@ -12,7 +12,8 @@ void select_data()
 		printf("connect failed!\n");
 		return;
 	}
-	printf("connect mysql success!\n");
+	printf("<h2>connect mysql success!</h2>\n");
+    printf("<br>");
 
 	char sql[1024];
 
@@ -24,12 +25,12 @@ void select_data()
 	int col = mysql_num_fields(res);
 	MYSQL_FIELD *field = mysql_fetch_fields(res);
 	int i = 0;
+	printf("<table border=\"1\">");
 	for(; i < col; i++){
-		printf("%s\t", field[i].name);
+		printf("<td>%s</td>", field[i].name);
 	}
 	printf("\n");
 
-	printf("<table border=\"1\">");
 	for(i=0; i < row; i++){
 		MYSQL_ROW rowData = mysql_fetch_row(res);
 		int j = 0;

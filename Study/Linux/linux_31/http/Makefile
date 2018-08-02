@@ -4,7 +4,7 @@ ROOT=$(shell pwd)
 all:httpd cgi
 
 httpd:httpd.c
-	gcc -o $@ $^ -lpthread
+	gcc -o $@ $^ -lpthread -finput-charset=GB2312
 cgi:
 	cd $(ROOT)/wwwroot/cgi; make clean; make; cd -
 
