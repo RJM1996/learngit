@@ -1,3 +1,8 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <strings.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -8,10 +13,6 @@
 #include <pthread.h>
 #include <ctype.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <strings.h>
-#include <string.h>
 #include "url.h"
 
 #define MAX 1024
@@ -345,7 +346,6 @@ end:
 	close(sock);
 }
 
-//httpd 8080
 int main(int argc, char *argv[])
 {
 	if(argc != 2){
@@ -353,9 +353,13 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	int listen_sock = startup(atoi(argv[1]));
+
 	//daemon(0, 0);
+    
 	signal(SIGPIPE, SIG_IGN);
-	for(;;){
+
+	for(;;)
+    {
 		struct sockaddr_in client;
 		socklen_t len = sizeof(client);
 		int new_sock = accept(listen_sock,\
@@ -365,17 +369,9 @@ int main(int argc, char *argv[])
 			perror("accept");
 			continue;
 		}
+        printf("[%d : %d]\n", (client.sin_addr.s_addr),ntohs(client.sin_port));
 		pthread_t id;
-		pthread_create(&id, NULL, handler_request, (void *)new_sock);
+		pthread_create(&id, NULL, handler_request, (void*)new_sock);
 		pthread_detach(id);
 	}
 }
-
-
-
-
-
-
-
-
-

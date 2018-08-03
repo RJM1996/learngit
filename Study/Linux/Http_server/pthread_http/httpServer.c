@@ -54,9 +54,18 @@ int get_line(int sock, char line[], int size)
     return i;
 }
 
-void echo_error(int sock, int status_code)
+void echo_error(int sock)
 {
-    (void) status_code;
+
+    char buf[MAX_SIZE/4];
+    memset(buf, 0, sizeof(buf));
+    sprintf(buf, "HTTP/1.0 404 Not Found\r\n");
+    send(sock, buf, strlen(buf), 0);
+    send(sock, blank_line, strlen(blank_line), 0);
+
+    // ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
+    // 在内核中, 两个文件描述符之间直接进行读写, 效率高
+    
     const char* _404_path = "webroot/error_code/404/404.html";
     int fd = open(_404_path, O_RDONLY);
     if(fd < 0)
@@ -64,26 +73,14 @@ void echo_error(int sock, int status_code)
         perror("open");
         return ;
     }
-
-    char buf[MAX_SIZE/4];
-    memset(buf, 0, sizeof(buf));
-
-    sprintf(buf, "HTTP 404 Not Found\r\n");
-    send(sock, buf, strlen(buf), 0);
-
-    send(sock, blank_line, strlen(blank_line), 0);
-
-    // ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
-    // 在内核中, 两个文件描述符之间直接进行读写, 效率高
-    
     struct stat st;
     stat(_404_path, &st);
-    ssize_t ret = sendfile(sock, fd, NULL, st.st_size);
-    if(ret < 0)
-    {
-        perror("sendfile");
-        return ;
-    }
+    sendfile(sock, fd, NULL, st.st_size);
+    // {
+    //     printf("echo_error - sendfile error\n");
+    //     perror("sendfile");
+    //     return ;
+    // }
     close(fd);
 }
 
@@ -94,7 +91,7 @@ void status_response(int sock, int status_code)
     switch(status_code)
     {
         case 404:
-            echo_error(sock, status_code);
+            echo_error(sock);
             break;
         case 503:
             break;
@@ -125,12 +122,13 @@ int echo_www(int sock, const char* resource_path, int size)
 
     // ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
     // 在内核中, 两个文件描述符之间直接进行读写, 效率高
-    ssize_t ret = sendfile(sock, fd, NULL, size);
-    if(ret < 0)
-    {
-        perror("sendfile");
-        return 404;
-    }
+    if(sendfile(sock, fd, NULL, size) == -1)
+        ;
+    // {
+    //     printf("echo_www - sendfile error\n");
+    //     perror("sendfile");
+    //     return 404;
+    // }
     close(fd);
     return 200;
 }
@@ -469,6 +467,8 @@ int main(int argc, char* argv[])
     // 1, 获取监听套接字
     int listen_sock = startUp(atoi(argv[1]));
 
+    signal(SIGPIPE, SIG_IGN);
+
     // 2, 循环, 获得新连接
     while(1)
     {
@@ -496,13 +496,13 @@ int main(int argc, char* argv[])
         // int pthread_create(pthread_t *tidp,const pthread_attr_t *attr,
         //                   (void*)(*start_rtn)(void*),void *arg);
         pthread_t tid = 0;
-        int pthread_create_ret = pthread_create(&tid, NULL, (void*)handle_request, (void*)&connect_fd);
-        if(pthread_create_ret < 0)
-        {
-            perror("pthread_create");
-            close(listen_sock);
-            return 6;
-        }
+        int pthread_create_ret = pthread_create(&tid, NULL, handle_request, (void*)&connect_fd);
+        // if(pthread_create_ret < 0)
+        // {
+        //     perror("pthread_create");
+        //     close(listen_sock);
+        //     return 6;
+        // }
         pthread_detach(tid);
     }
     close(listen_sock);

@@ -19,11 +19,9 @@ void select_data()
         return;
     }
     printf("<h2>连接数据库成功 !!!</h2>\n");
-    const char* charset = mysql_character_set_name(mysql_fd);
-    printf("<字符集01: %s><br>", charset);
     mysql_set_character_set(mysql_fd, "utf8");
-    const char* charset02 = mysql_character_set_name(mysql_fd);
-    printf("<字符集02: %s><br>", charset02);
+    const char* charset = mysql_character_set_name(mysql_fd);
+    printf("<字符集: %s><br>", charset);
 
     char sql[1024];
 
