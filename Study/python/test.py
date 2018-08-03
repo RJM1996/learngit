@@ -638,6 +638,25 @@ f = open("text.txt", 'w')
 # import os.path as p
 # print p.exists('test.py')
 
+# 导入模块意味着被执行
+
+# reload(os) # 重新加载模块 热加载
+
+# 模块的内置变量
+# print globals()
+# 包 Package
+
+# import calc.add
+# print calc.Add(10, 20)
+
+# 面向对象
+# 抽象, 类和实例
+# 封装, 接口
+# 组合
+# is-a : public 继承
+# has-a: 组合
+# 多态
+
 
 
 print '\n'
