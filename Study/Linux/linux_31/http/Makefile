@@ -3,8 +3,8 @@ ROOT=$(shell pwd)
 .PHONY:all
 all:httpd cgi
 
-httpd:httpd.c
-	gcc -o $@ $^ -lpthread -finput-charset=GB2312
+httpd:httpd.c url.c
+	gcc -o $@ $^ -lpthread -fexec-charset=utf8
 cgi:
 	cd $(ROOT)/wwwroot/cgi; make clean; make; cd -
 

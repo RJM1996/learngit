@@ -47,6 +47,7 @@ void select_data()
 
 int main()
 {
+    printf("<meta charset=utf-8>");
 	char data[1024];
 	if(getenv("METHOD")){
 		if(strcasecmp("GET", getenv("METHOD")) == 0){

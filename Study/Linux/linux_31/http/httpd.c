@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <strings.h>
-#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -12,6 +7,12 @@
 #include <signal.h>
 #include <pthread.h>
 #include <ctype.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <strings.h>
+#include <string.h>
+#include "url.h"
 
 #define MAX 1024
 #define HOME_PAGE "index.html"
@@ -204,7 +205,7 @@ int exe_cgi(int sock, char path[], char method[], char *query_string)
 			putenv(content_length_env);
 		}
 
-		printf("method: %s");
+		// printf("method: %s");
 		// method, GET[query_string], POST[content_length]
 		execl(path, path, NULL);
 		exit(1);
@@ -265,6 +266,7 @@ static void *handler_request(void *arg)
 		i++, j++;
 	}
 	method[i] = '\0';
+    printf("%s ", method);
 
 	//gEt, post, Post, pOst
 	if(strcasecmp(method, "GET") == 0){
@@ -285,8 +287,8 @@ static void *handler_request(void *arg)
 		url[i] = line[j];
 		i++, j++;
 	}
-	url[i] = '\0';
-    printf("url: %s\n", url);
+    urldecode(url);
+    printf("%s ", url);
 
 	//url
 	if(strcasecmp(method, "GET")==0){
@@ -327,7 +329,7 @@ static void *handler_request(void *arg)
 			errCode=exe_cgi(sock, path, method, query_string);
 		}
 		else{
-			printf("method: %s \npath: %s\nquery_string: %s\n",method,path,query_string);
+			printf("\nmethod: %s \npath: %s\nquery_string: %s\n",method,path,query_string);
 			// method[GET, POST], cgi[0|1], url[], query_String[NULL|arg]
 			echo_www(sock, path, st.st_size, &errCode);
 		}
