@@ -656,7 +656,16 @@ f = open("text.txt", 'w')
 # is-a : public 继承
 # has-a: 组合
 # 多态
+# 自省: 运行时获取对象的相关信息
 
+# 创建一个类
+class ClassName(object): # 新式类, 推荐
+    pass
+
+help(ClassName)
+
+t = ClassName() # 旧式类
+print type(t)
 
 
 print '\n'
