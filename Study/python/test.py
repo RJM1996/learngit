@@ -625,6 +625,19 @@ f = open("text.txt", 'w')
 #     print 'hehe'
 #     # KeyboardInterrupt  # ctrl-c
 
-    
+# 模块和包
+# import os # 不是文本替换
+# print id(os)
+# print type(os)
+
+# import sys
+# sys.path.append('..')
+# print sys.path # 查找模块的路径
+# import os, sys # 不推荐
+# 模块也是一个对象, 也可以赋值
+# import os.path as p
+# print p.exists('test.py')
+
+
 
 print '\n'
