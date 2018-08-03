@@ -287,7 +287,7 @@ void* handle_request(void* arg)
     }
     // 到这里已经提取了第一行
     line[ch_size] = '\0';
-    printf("%s", line);
+    // printf("%s", line);
     // GET /a/b/c HTTP/1.0
     // 首先提取出请求方法
     size_t i = 0;
@@ -313,6 +313,9 @@ void* handle_request(void* arg)
         i++, j++;
     }
     url[i] = '\0';
+    urldecode(url);
+    printf("url: %s\n", url);
+
     // 到这里 url 也提取到了
     // 版本号暂时忽略不提取, 默认 HTTP/1.0
     // 接下来判断请求方法, 因为本服务器仅支持 get 和 post
@@ -358,6 +361,8 @@ void* handle_request(void* arg)
     {
         strcat(resource_path, "index.html");
     }
+    printf("请求方法: %s\n请求路径: %s\n请求参数: %s\n", 
+            method, url, resource_path);
 
     // int stat(const char *file_name, struct stat *buf);
     // 通过文件名filename获取文件信息，并保存在buf所指的结构体stat中
@@ -396,8 +401,6 @@ void* handle_request(void* arg)
         else
         {
             // 将报头处理完
-            // printf("method: %s, url: %s, path: %s, cgi: %d, query_string: %s\n", 
-            //        method, url, resource_path, cgi_flag, query_string);
             handle_hander(sock);
             status_code = echo_www(sock, resource_path, st.st_size);
         }

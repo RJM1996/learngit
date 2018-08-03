@@ -1,39 +1,40 @@
+<!DOCTYPE html>
 <html>
-<head>
-<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-<h1>
-    <div class="text" style=" text-align:center;">WelCome to my HTTP Server !
-    </div>
-</h1>
-<!--<img src="img/cat.jpg" alt="Big Boat">-->
-</head>
-</br>
-<body>
-<form action="/cgi/cgi" method="GET">
-    请输入年 : 
-    <br>
-    <input type="text" name="year">
-    <br>
-    请输入月 : 
-    <br>
-    <input type="text" name="month">
-    <br>
-    请输入日 : 
-    <br>
-    <input type="text" name="day">
-    <br>
-    相差天数 : 
-    <br>
-    <input type="text" name="nums">
-    <br>
-    <br>
-    <INPUT type="SUBMIT" value="提交">
-    <br>
-</form>
-<a href="./index/index.html">我的炫酷主页</a>
-<div id="Layer1" style="position:absolute; width:100%; height:100%; z-index:-1; background-color:#FAEBD7">    
-<img src="img/01.jpg" height="100%" width="100%"/>  
+    <meta charset="utf-8">
+    <body>
+        <h1>welcome to my http server!</h1>
 
-</body>
+        <h2>测试数据库模块</h2>
+        <form action="/cgi/mysql/insert" method="GET">
+            name:<br>
+            <input type="text" name="name" value="zhangsan">
+            <br>
+            sex:<br>
+            <input type="text" name="sex" value="man">
+            <br>
+            phone:<br>
+            <input type="text" name="phone" value="1234567890">
+            <br>
+            <input type="submit" value="Submit">
+        </form> 
+        <br/>
+        <br/>
+        <a href="./cgi/mysql/select">查询</a>
+        <br/>
+        <br/>
+        <h2>测试网络计算器</h2>
+        <form action="./cgi/cal/cal" method="GET">
+            First data:<br>
+            <input type="text" name="firstdata" value="100">
+            <br>
+            Last data:<br>
+            <input type="text" name="lastdata" value="20">
+            <br><br>
+            <input type="submit" value="Submit">
+        </form>
+        <br/>
+        <br/>
+
+        <img src="./img/cat.jpg"/>
+    </body>
 </html>
-

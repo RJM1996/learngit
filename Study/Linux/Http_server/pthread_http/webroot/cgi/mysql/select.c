@@ -7,18 +7,27 @@
 
 void select_data()
 {
+    printf("<html>");
+    printf("<meta charset=utf-8>");
     MYSQL *mysql_fd = mysql_init(NULL);
-    if(mysql_real_connect(mysql_fd, "127.0.0.1", "root",\
-                          "4321", "user", 3306, NULL, 0) == NULL)
+
+    if(mysql_real_connect(mysql_fd, 
+                          "127.0.0.1", "root", "4321", "http", 
+                          3306, NULL, 0) == NULL)
     {
-        printf("connect failed!\n");
+        printf("<h2>连接失败 !!!</h2>\n");
         return;
     }
-    printf("connect mysql success!\n");
+    printf("<h2>连接数据库成功 !!!</h2>\n");
+    const char* charset = mysql_character_set_name(mysql_fd);
+    printf("<字符集01: %s><br>", charset);
+    mysql_set_character_set(mysql_fd, "utf8");
+    const char* charset02 = mysql_character_set_name(mysql_fd);
+    printf("<字符集02: %s><br>", charset02);
 
     char sql[1024];
 
-    sprintf(sql, "SELECT * FROM student_info");
+    sprintf(sql, "SELECT * FROM user");
     mysql_query(mysql_fd, sql);
 
     MYSQL_RES *res = mysql_store_result(mysql_fd);
@@ -26,13 +35,13 @@ void select_data()
     int col = mysql_num_fields(res);
     MYSQL_FIELD *field = mysql_fetch_fields(res);
     int i = 0;
+    printf("<table border=\"1\">");
     for(; i < col; i++)
     {
-        printf("%s\t", field[i].name);
+        printf("<td>%s</td>", field[i].name);
     }
     printf("\n");
 
-    printf("<table border=\"1\">");
     for(i=0; i < row; i++)
     {
         MYSQL_ROW rowData = mysql_fetch_row(res);
@@ -40,14 +49,14 @@ void select_data()
         printf("<tr>");
         for(; j < col; j++)
         {
-            printf("<td>%s</td>td>", rowData[j]);
+            printf("<td>%s</td>", rowData[j]);
         }
-        printf("</tr>tr>");
+        printf("</tr>");
     }
-    printf("</table>table>");
+    printf("</table>");
+    printf("</html>");
 
     mysql_close(mysql_fd);
-
 }
 
 int main()

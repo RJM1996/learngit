@@ -24,6 +24,7 @@
 #include <sys/wait.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "url.h"
 
 #define MAX_SIZE 1024*4
 
