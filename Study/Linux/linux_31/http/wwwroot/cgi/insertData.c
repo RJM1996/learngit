@@ -8,7 +8,7 @@
 void instert_data(char *name, char *sex, char *phone)
 {
     MYSQL *mysql_fd = mysql_init(NULL);
-    if(mysql_real_connect(mysql_fd, "127.0.0.1", "root", \
+    if(mysql_real_connect(mysql_fd, "192.168.3.33", "root", \
                           "4321", "http", 3306, NULL, 0) == NULL)
     {
         printf("connect failed!\n");
@@ -28,6 +28,10 @@ void instert_data(char *name, char *sex, char *phone)
     if(mysql_query(mysql_fd, sql) != 0)
     {
         printf("<h3>插入失败</h3>\n");
+    }
+    else
+    {
+        printf("<h3>插入成功</h3>\n");
     }
 
     mysql_close(mysql_fd);

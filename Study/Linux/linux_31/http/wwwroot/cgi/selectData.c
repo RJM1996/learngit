@@ -7,11 +7,14 @@
 void select_data()
 {
 	MYSQL *mysql_fd = mysql_init(NULL);
-	if(mysql_real_connect(mysql_fd, "127.0.0.1", "root",\
+	if(mysql_real_connect(mysql_fd, "192.168.3.33", "root",\
 				"4321", "http", 3306, NULL, 0) == NULL){
 		printf("connect failed!\n");
 		return;
 	}
+
+    // mysql_set_character_set(mysql_fd, "utf8");
+
 	printf("<h2>connect mysql success!</h2>\n");
     printf("<br>");
 
@@ -19,6 +22,9 @@ void select_data()
 
 	sprintf(sql, "SELECT * FROM user");
 	mysql_query(mysql_fd, sql);
+
+	//mysql_query(sql, "set character_set_results=utf8");
+    
 
 	MYSQL_RES *res = mysql_store_result(mysql_fd);
 	int row = mysql_num_rows(res);
@@ -31,13 +37,23 @@ void select_data()
 	}
 	printf("\n");
 
+    printf("<br>");
 	for(i=0; i < row; i++){
 		MYSQL_ROW rowData = mysql_fetch_row(res);
 		int j = 0;
 		printf("<tr>");
 		for(; j < col; j++){
 			printf("<td>%s</td>", rowData[j]);
+            char* str = rowData[j];
+            size_t i = 0;
+            printf("<td>");
+            for(i=0; i<strlen(str); i++)
+            {
+                printf("%02x", str[i]);
+            }
+            printf("</td>");
 		}
+    printf("<br>");
 		printf("</tr>");
 	}
 	printf("</table>");

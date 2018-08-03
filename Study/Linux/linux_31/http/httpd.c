@@ -266,7 +266,7 @@ static void *handler_request(void *arg)
 		i++, j++;
 	}
 	method[i] = '\0';
-    printf("%s ", method);
+    // printf("%s ", method);
 
 	//gEt, post, Post, pOst
 	if(strcasecmp(method, "GET") == 0){
@@ -287,6 +287,8 @@ static void *handler_request(void *arg)
 		url[i] = line[j];
 		i++, j++;
 	}
+
+    printf("%s ", url);
     urldecode(url);
     printf("%s ", url);
 
