@@ -68,6 +68,7 @@ void echo_error(int sock)
     int fd = open(_404_path, O_RDONLY);
     if(fd == -1)
     {
+        printf("404_open\n");
         perror("open");
         return ;
     }
@@ -101,6 +102,7 @@ int echo_www(int sock, const char* resource_path, int size)
     int fd = open(resource_path, O_RDONLY);
     if(fd < 0)
     {
+        printf("www_open\n");
         perror("open");
         return 404;
     }
@@ -170,8 +172,7 @@ static int exe_cgi(int sock, char* method, char* resource_path, char* query_stri
     send(sock, status_line, strlen(status_line), 0);
     send(sock, blank_line, strlen(blank_line), 0);
 
-    // 创建子进程, 执行 execl 
-    // 创建管道, 用于父子进程通信
+    // 创建 2 个管道, 用于父子进程双向通信
     int input[2];
     int output[2];
     // int pipe(int pipefd[2]);
@@ -180,6 +181,8 @@ static int exe_cgi(int sock, char* method, char* resource_path, char* query_stri
         perror("pipe");
         return 404;
     }
+    //printf("input: %d %d\n", input[0], input[1]);
+    //printf("output: %d %d\n", output[0], output[1]);
 
     pid_t pid = fork();
     if(pid < 0)
@@ -205,11 +208,15 @@ static int exe_cgi(int sock, char* method, char* resource_path, char* query_stri
             putenv(content_length_env);
         }
 
-        if(dup2(input[0], 0) < 0 || dup2(output[1], 1) < 0)
+        int dup2_ret1;
+        int dup2_ret2;
+        if((dup2_ret1 = dup2(input[0], 0)) == -1 || (dup2_ret2 =  dup2(output[1], 1)) == -1)
         {
             perror("dup2");
             return 404;
         }
+        //printf("dup2_ret1: %d, input[0]: %d\n", dup2_ret1, input[0]);
+        //printf("dup2_ret2: %d, output[1]: %d\n", dup2_ret2, output[1]);
 
         // 到达程序替换
         int ret = execl(resource_path, resource_path, NULL);
@@ -224,10 +231,8 @@ static int exe_cgi(int sock, char* method, char* resource_path, char* query_stri
     {
         close(input[0]);
         close(output[1]);
-
         int i = 0;
         char ch = '\0';
-        //POST
         if(strcasecmp(method, "POST") == 0)
         {
             for(; i < content_length; i++)
@@ -236,11 +241,11 @@ static int exe_cgi(int sock, char* method, char* resource_path, char* query_stri
                 send(input[1], &ch, 1, 0);
             }
         }
-
-        //GET
         ch = '\0';
         while(read(output[0], &ch, 1))
         {
+            //printf("output[0] : %d\n", output[0]);
+            //printf("input[1] : %d\n", input[1]);
             send(sock, &ch, 1, 0); 
         }
 
@@ -259,7 +264,7 @@ static int exe_cgi(int sock, char* method, char* resource_path, char* query_stri
 // 请求处理函数
 static void* handle_request(void* arg)
 {
-    int sock = *(int*)arg;
+    int sock = (int)arg;
     char line[MAX_SIZE];
     int status_code = 200; // 状态码
 
@@ -422,7 +427,11 @@ int startUp(int port)
     int opt = 1;
     setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     // 防御空连接
-    // TODO
+    int keepAlive = 3;// 判定断开前的 KeepAlive 探测次数
+    if(setsockopt(listen_fd, SOL_SOCKET, SO_KEEPALIVE, (void*)&keepAlive,sizeof(keepAlive)) == -1)
+    {
+        printf("setsockopt SO_KEEPALIVE error!\n");
+    }
 
     int bind_ret = bind(listen_fd, (struct sockaddr*)&addr, sizeof(addr));
     if(bind_ret < 0)
@@ -458,21 +467,20 @@ int main(int argc, char* argv[])
     // 忽略 SIGPIPE 信号
     signal(SIGPIPE, SIG_IGN);
 
-    // 将 connect_fd 定义在循环外, 防止因为生命周期结束引起send失败
-    int connect_fd;
 
     // 2, 循环, 获得新连接
     while(1)
     {
         struct sockaddr_in client;
         socklen_t len = sizeof(client);
-        connect_fd = accept(listen_sock, (struct sockaddr*)&client, &len);
+        int connect_fd = accept(listen_sock, (struct sockaddr*)&client, &len);
         if(connect_fd < 0)
         {
             perror("accept");
             continue;
         }
         // 到这里说明有新连接来了
+#ifdef DEBUG
         char buf_ip[MAX_SIZE/4];
         //清空buf_ip
         buf_ip[0] = 0;
@@ -483,12 +491,12 @@ int main(int argc, char* argv[])
             return 4;
         }
         printf("get a new connect : [%s | %d]\n", buf_ip, ntohs(client.sin_port));
-
+#endif
         // 创建线程
         // int pthread_create(pthread_t *tidp,const pthread_attr_t *attr,
         //                   (void*)(*start_rtn)(void*),void *arg);
         pthread_t tid = 0;
-        int pthread_create_ret = pthread_create(&tid, NULL, handle_request, (void*)&connect_fd);
+        int pthread_create_ret = pthread_create(&tid, NULL, handle_request, (void*)connect_fd);
         if(pthread_create_ret < 0)
         {
             perror("pthread_create");

@@ -191,8 +191,11 @@ int exe_cgi(int sock, char path[], char method[], char *query_string)
 	else if(id == 0){//child
 		close(input[1]); 
 		close(output[0]);
-		dup2(input[0], 0);
-		dup2(output[1], 1);
+		if(dup2(input[0], 0) == -1 || dup2(output[1], 1) == -1)
+        {
+            perror("dup2");
+            return 404;
+        }
 
 		sprintf(method_env, "METHOD=%s", method);
 		putenv(method_env);
@@ -249,7 +252,7 @@ static void *handler_request(void *arg)
 #ifdef Debug
 	do{
 		get_line(sock, line, sizeof(line));
-		printf("%s", line);
+		// printf("%s", line);
 	}while(strcmp(line, "\n") != 0);
 #else
 
@@ -289,9 +292,9 @@ static void *handler_request(void *arg)
 		i++, j++;
 	}
 
-    printf("%s ", url);
+    //printf("%s ", url);
     urldecode(url);
-    printf("%s ", url);
+    //printf("%s ", url);
 
 	//url
 	if(strcasecmp(method, "GET")==0){
@@ -332,7 +335,7 @@ static void *handler_request(void *arg)
 			errCode=exe_cgi(sock, path, method, query_string);
 		}
 		else{
-			printf("\nmethod: %s \npath: %s\nquery_string: %s\n",method,path,query_string);
+			//printf("\nmethod: %s \npath: %s\nquery_string: %s\n",method,path,query_string);
 			// method[GET, POST], cgi[0|1], url[], query_String[NULL|arg]
 			echo_www(sock, path, st.st_size, &errCode);
 		}
@@ -369,7 +372,7 @@ int main(int argc, char *argv[])
 			perror("accept");
 			continue;
 		}
-        printf("[%d : %d]\n", (client.sin_addr.s_addr),ntohs(client.sin_port));
+        //printf("[%d : %d]\n", (client.sin_addr.s_addr),ntohs(client.sin_port));
 		pthread_t id;
 		pthread_create(&id, NULL, handler_request, (void*)new_sock);
 		pthread_detach(id);
