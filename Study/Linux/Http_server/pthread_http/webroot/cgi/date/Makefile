@@ -1,8 +1,8 @@
 
 .PHONY:clean
 
-main:date.cpp main.cpp
+date_cal:date.cpp main.cpp
 	clang++ -o $@  $^ -g 
 
 clean:
-	rm -f main
+	rm -f date_cal

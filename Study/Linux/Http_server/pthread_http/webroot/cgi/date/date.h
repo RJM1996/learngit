@@ -69,7 +69,7 @@ class Date
         // 显示日期
         void Display()
         {
-            cout << m_year << "-" << m_month << "-" << m_day << endl;
+            printf("<h3>%d - %d - %d</h3>", m_year, m_month, m_day);
         }
 
         // 获得某个月的天数
@@ -139,7 +139,7 @@ class Date
         bool operator>=(const Date& x);
         bool operator<=(const Date& x);
 
-        Date* operator& (const Date& x)
+        Date* operator& ()
         {
             return this;
             // return NULL;
@@ -152,3 +152,4 @@ class Date
         int m_day;
 };
 
+void Date_cal(char* arg);

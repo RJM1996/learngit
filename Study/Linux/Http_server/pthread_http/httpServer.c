@@ -58,13 +58,15 @@ void echo_error(int sock)
 {
     char buf[MAX_SIZE/4];
     memset(buf, 0, sizeof(buf));
+
     sprintf(buf, "HTTP/1.0 404 Not Found\r\n");
     send(sock, buf, strlen(buf), 0);
+
     send(sock, blank_line, strlen(blank_line), 0);
 
     const char* _404_path = "webroot/error_code/404/404.html";
     int fd = open(_404_path, O_RDONLY);
-    if(fd < 0)
+    if(fd == -1)
     {
         perror("open");
         return ;
@@ -105,17 +107,13 @@ int echo_www(int sock, const char* resource_path, int size)
 
     // ssize_t send(int sockfd, const void *buf, size_t len, int flags);
     send(sock, status_line, strlen(status_line), 0);
-
     char len_buf[MAX_SIZE/4] = {0};
     // content_length = "Content-Length: %u\r\n"
     sprintf(len_buf, "Content-Length: %u\r\n", size);
     send(sock, len_buf, strlen(len_buf), 0);
-
     send(sock, blank_line, strlen(blank_line), 0);
-
     // ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
     // 在内核中, 两个文件描述符之间直接进行读写, 效率高
-    
     sendfile(sock, fd, NULL, size);
     close(fd);
     return 200;
@@ -133,8 +131,9 @@ void handle_hander(int sock)
 
 static int exe_cgi(int sock, char* method, char* resource_path, char* query_string)
 {
-    printf("运行 CGI 程序 ... \n");
+    // printf("运行 CGI 程序 ... \n");
 
+    // 这里的父子进程通信方式选择匿名管道和环境变量
     // 环境变量父子进程都可以看见
     int content_length = -1;
     char method_env[MAX_SIZE/10];
@@ -257,9 +256,10 @@ static int exe_cgi(int sock, char* method, char* resource_path, char* query_stri
     return 200;
 }
 
+// 请求处理函数
 static void* handle_request(void* arg)
 {
-    int sock = (int)arg;
+    int sock = *(int*)arg;
     char line[MAX_SIZE];
     int status_code = 200; // 状态码
 
@@ -299,7 +299,7 @@ static void* handle_request(void* arg)
     }
     url[i] = '\0';
     urldecode(url);
-    printf("url: %s\n", url);
+    // printf("url: %s\n", url);
 
     // 到这里 url 也提取到了
     // 版本号暂时忽略不提取, 默认 HTTP/1.0
@@ -307,6 +307,7 @@ static void* handle_request(void* arg)
     // int strcasecmp(const char *s1, const char *s2); 忽略大小写的字符串比较
     if(strcasecmp(method, "GET") != 0 && strcasecmp(method, "POST") != 0)
     {
+        // 因为我们的服务器暂时只提供 GET 和 POST 请求的处理
         // 如果请求方法不是 get || post, 就返回错误码, 关闭连接.
         status_code = 404;
         goto end;
@@ -346,8 +347,8 @@ static void* handle_request(void* arg)
     {
         strcat(resource_path, "index.html");
     }
-    printf("请求方法: %s\n请求路径: %s\n请求参数: %s\n", 
-            method, url, resource_path);
+    // printf("请求方法: %s\n请求路径: %s\n请求参数: %s\n", 
+    //        method, url, resource_path);
 
     // int stat(const char *file_name, struct stat *buf);
     // 通过文件名filename获取文件信息，并保存在buf所指的结构体stat中
@@ -374,10 +375,6 @@ static void* handle_request(void* arg)
         {
             cgi_flag = 1;
         }
-        else
-        {
-            // TODO
-        }
 
         if(cgi_flag == 1)
         {
@@ -394,6 +391,7 @@ static void* handle_request(void* arg)
 end:
     if(status_code != 200)
     {
+        // 返回状态码信息
         status_response(sock, status_code);
     }
     close(sock);
@@ -420,8 +418,11 @@ int startUp(int port)
         return 3;
     }
 
+    // 解决TimeWait引起的bind失败问题
     int opt = 1;
     setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    // 防御空连接
+    // TODO
 
     int bind_ret = bind(listen_fd, (struct sockaddr*)&addr, sizeof(addr));
     if(bind_ret < 0)
@@ -454,21 +455,25 @@ int main(int argc, char* argv[])
     // 1, 获取监听套接字
     int listen_sock = startUp(atoi(argv[1]));
 
+    // 忽略 SIGPIPE 信号
     signal(SIGPIPE, SIG_IGN);
+
+    // 将 connect_fd 定义在循环外, 防止因为生命周期结束引起send失败
+    int connect_fd;
 
     // 2, 循环, 获得新连接
     while(1)
     {
         struct sockaddr_in client;
         socklen_t len = sizeof(client);
-        int connect_fd = accept(listen_sock, (struct sockaddr*)&client, &len);
+        connect_fd = accept(listen_sock, (struct sockaddr*)&client, &len);
         if(connect_fd < 0)
         {
             perror("accept");
             continue;
         }
         // 到这里说明有新连接来了
-        char buf_ip[1024];
+        char buf_ip[MAX_SIZE/4];
         //清空buf_ip
         buf_ip[0] = 0;
         //inet_ntop转换client_sock的ip
@@ -482,15 +487,15 @@ int main(int argc, char* argv[])
         // 创建线程
         // int pthread_create(pthread_t *tidp,const pthread_attr_t *attr,
         //                   (void*)(*start_rtn)(void*),void *arg);
-        
         pthread_t tid = 0;
-        int pthread_create_ret = pthread_create(&tid, NULL, handle_request, (void*)connect_fd);
+        int pthread_create_ret = pthread_create(&tid, NULL, handle_request, (void*)&connect_fd);
         if(pthread_create_ret < 0)
         {
             perror("pthread_create");
             close(listen_sock);
             return 6;
         }
+        // 线程分离
         pthread_detach(tid);
     }
     close(listen_sock);

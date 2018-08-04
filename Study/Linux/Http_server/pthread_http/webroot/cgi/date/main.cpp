@@ -1,41 +1,44 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <strings.h>
 #include "date.h"
-
-void TestDate_01()
-{
-    Date d1(2018, 7, 6);
-    Date d2 = d1 + 100;
-    d2.Display();
-    d1.Display();
-    d1 += 1000;
-    d1.Display();
-    return ;
-}
-
-void TestDate_02()
-{
-    Date d1(2018, 7, 16);
-    Date d2 = d1;
-    Date d3(2018, 7, 20);
-    d2 = d3;
-    d1.Display();
-    d2.Display();
-    cout << &d1 << endl;
-    cout << &d2 << endl;
-    cout << &d3 << endl;
-    if(d1 == d2)
-    {
-        cout << "d1 == d2" << endl;
-    }
-    else
-    {
-        cout << "d1 != d2" << endl;
-    }
-}
-
 
 int main()
 {
-    // TestDate_01();
-    TestDate_02();
+    char* method = NULL;
+    char* query_string = NULL;
+    char* arg;
+    int content_len = -1;
+    char buf[1024];
+    if(getenv("METHOD") != NULL)
+    {
+        method = getenv("METHOD");
+        if(strcasecmp(method, "GET") == 0)
+        {
+            if(getenv("QUERY_STRING") != NULL)
+            {
+                query_string = getenv("QUERY_STRING");
+                arg = query_string;
+            }
+        }
+        else
+        {
+            // post
+            if(getenv("CONTENT_LENGTH") != NULL)
+            {
+                content_len = atoi(getenv("CONTENT_LENGTH"));
+                int i = 0;
+                for(; i < content_len; i++)
+                {
+                    read(0, &buf[i], 1);
+                }
+                buf[i] = '\0';
+                arg = buf;
+            }
+        }
+    }
+    Date_cal(arg);
     return 0;
 }
