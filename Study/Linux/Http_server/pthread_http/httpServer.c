@@ -56,16 +56,12 @@ int get_line(int sock, char line[], int size)
 
 void echo_error(int sock)
 {
-
     char buf[MAX_SIZE/4];
     memset(buf, 0, sizeof(buf));
     sprintf(buf, "HTTP/1.0 404 Not Found\r\n");
     send(sock, buf, strlen(buf), 0);
     send(sock, blank_line, strlen(blank_line), 0);
 
-    // ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
-    // 在内核中, 两个文件描述符之间直接进行读写, 效率高
-    
     const char* _404_path = "webroot/error_code/404/404.html";
     int fd = open(_404_path, O_RDONLY);
     if(fd < 0)
@@ -75,12 +71,9 @@ void echo_error(int sock)
     }
     struct stat st;
     stat(_404_path, &st);
+    // ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
+    // 在内核中, 两个文件描述符之间直接进行读写, 效率高
     sendfile(sock, fd, NULL, st.st_size);
-    // {
-    //     printf("echo_error - sendfile error\n");
-    //     perror("sendfile");
-    //     return ;
-    // }
     close(fd);
 }
 
@@ -122,13 +115,8 @@ int echo_www(int sock, const char* resource_path, int size)
 
     // ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
     // 在内核中, 两个文件描述符之间直接进行读写, 效率高
-    if(sendfile(sock, fd, NULL, size) == -1)
-        ;
-    // {
-    //     printf("echo_www - sendfile error\n");
-    //     perror("sendfile");
-    //     return 404;
-    // }
+    
+    sendfile(sock, fd, NULL, size);
     close(fd);
     return 200;
 }
@@ -269,10 +257,9 @@ static int exe_cgi(int sock, char* method, char* resource_path, char* query_stri
     return 200;
 }
 
-void* handle_request(void* arg)
+static void* handle_request(void* arg)
 {
-    int* socket = (int*)arg;
-    int sock = *socket;
+    int sock = (int)arg;
     char line[MAX_SIZE];
     int status_code = 200; // 状态码
 
@@ -495,17 +482,17 @@ int main(int argc, char* argv[])
         // 创建线程
         // int pthread_create(pthread_t *tidp,const pthread_attr_t *attr,
         //                   (void*)(*start_rtn)(void*),void *arg);
+        
         pthread_t tid = 0;
-        int pthread_create_ret = pthread_create(&tid, NULL, handle_request, (void*)&connect_fd);
-        // if(pthread_create_ret < 0)
-        // {
-        //     perror("pthread_create");
-        //     close(listen_sock);
-        //     return 6;
-        // }
+        int pthread_create_ret = pthread_create(&tid, NULL, handle_request, (void*)connect_fd);
+        if(pthread_create_ret < 0)
+        {
+            perror("pthread_create");
+            close(listen_sock);
+            return 6;
+        }
         pthread_detach(tid);
     }
     close(listen_sock);
     return 0;
 }
-

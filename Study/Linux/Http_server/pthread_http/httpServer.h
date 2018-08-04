@@ -36,5 +36,5 @@ int get_line(int sock, char line[], int size);
 void status_response(int sock, int status_code);
 int echo_www(int sock, const char* resource_path, int size);
 void handle_hander(int sock);
-void* handle_request(void* arg);
+static void* handle_request(void* arg);
 int startUp(int port);
