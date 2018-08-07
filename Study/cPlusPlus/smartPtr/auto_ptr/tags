@@ -1,0 +1,21 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+AA	auto_ptr.cpp	/^struct AA$/;"	s	file:
+AutoPtr	auto_ptr.cpp	/^    AutoPtr(AutoPtr& ap)$/;"	f	class:AutoPtr
+AutoPtr	auto_ptr.cpp	/^    AutoPtr(T* t_ptr)$/;"	f	class:AutoPtr
+AutoPtr	auto_ptr.cpp	/^class AutoPtr$/;"	c	file:
+Test01	auto_ptr.cpp	/^void Test01()$/;"	f
+Test02	auto_ptr.cpp	/^void Test02()$/;"	f
+Test03	auto_ptr.cpp	/^void Test03()$/;"	f
+_a1	auto_ptr.cpp	/^    int _a1;$/;"	m	struct:AA	file:
+_a2	auto_ptr.cpp	/^    int _a2;$/;"	m	struct:AA	file:
+m_ptr	auto_ptr.cpp	/^    T* m_ptr;$/;"	m	class:AutoPtr	file:
+main	auto_ptr.cpp	/^int main()$/;"	f
+operator *	auto_ptr.cpp	/^    T& operator* ()$/;"	f	class:AutoPtr
+operator ->	auto_ptr.cpp	/^    T* operator-> ()$/;"	f	class:AutoPtr
+operator =	auto_ptr.cpp	/^    AutoPtr& operator= (AutoPtr& ap)$/;"	f	class:AutoPtr
+~AutoPtr	auto_ptr.cpp	/^    ~AutoPtr()$/;"	f	class:AutoPtr
