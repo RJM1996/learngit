@@ -2,13 +2,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <strings.h>
-#include "cgi.h"
 
 int main()
 {
     char* method = NULL;
     char* query_string = NULL;
-    char* arg;
+    char* arg = NULL;
     int content_len = -1;
     char buf[1024];
     if(getenv("METHOD") != NULL)
@@ -39,17 +38,6 @@ int main()
         }
     }
 
-    
-    char* pArg = arg;
-
-    if(pArg[0] == 'y')
-    {
-        Date_cal(arg);
-    }
-    else
-    {
-        my_cal(arg);
-    }
-
+    printf("arg:%s\n",arg);
     return 0;
 }

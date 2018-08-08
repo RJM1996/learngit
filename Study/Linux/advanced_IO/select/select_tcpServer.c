@@ -1,21 +1,12 @@
-/*================================================================
-
-# File Name: select_tcpServer.c
-# Author: rjm
-# mail: rjm96@foxmail.com
-# Created Time: 2018年05月31日 星期四 16时34分51秒
-
-================================================================*/
-
 
 // 利用select 实现一个单进程版本的tcp服务器, 可服务多个客户
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/select.h>
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/select.h>
+#include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
@@ -34,7 +25,8 @@ void arr_init(int* fd_arr, int num)
 // 添加套接字
 int arr_add(int* fd_arr, int num, int fd_sock)
 {
-    int i = 0;
+    (void)num;
+    size_t i = 0;
     for(; i<MAX_FD_SIZE; i++)
     {
         if(fd_arr[i] == INIT)
@@ -46,8 +38,9 @@ int arr_add(int* fd_arr, int num, int fd_sock)
     return -1;
 }
 // 删除套接字
-void arr_del(int* fd_arr, int num, int index)
+void arr_del(int* fd_arr, int num, size_t index)
 {
+    (void)num;
     if(index < MAX_FD_SIZE && index > 0)
     {
         fd_arr[index] = INIT;
@@ -56,9 +49,10 @@ void arr_del(int* fd_arr, int num, int index)
 // 设置文件描述符集
 int set_fds(int* fd_arr, int num, fd_set* fds)
 {
+    (void)num;
     int max_fd = INIT; 
     printf("select : ");
-    int i = 0;
+    size_t i = 0;
     for(; i<MAX_FD_SIZE; i++)
     {
         if(fd_arr[i] > INIT)

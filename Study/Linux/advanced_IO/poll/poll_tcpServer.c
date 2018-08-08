@@ -1,17 +1,8 @@
-/*================================================================
-
-# File Name: poll_tcpServer.c
-# Author: rjm
-# mail: rjm96@foxmail.com
-# Created Time: 2018年05月31日 星期四 20时57分39秒
-
-================================================================*/
-
-
 
 #include <stdio.h>
 #include <poll.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/select.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -85,49 +76,38 @@ int main(int argc, char* argv[])
         printf("Usage: ./server [port > 1024]\n");
         return -1;
     }
+
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = inet_addr(argv[1]);
-    addr.sin_addr.s_addr = htons(INADDR_ANY);
+    addr.sin_addr.s_addr = INADDR_ANY;
 
-    // 获取监听套接字
     int listen_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if(listen_fd < 0)
+    if(listen_fd == -1)
     {
         perror("socket");
         return -1;
     }
-    // 绑定
-    // int bind(int sockfd, const struct sockaddr *
-    //          addr,socklen_t addrlen);
-    int bind_ret = bind(listen_fd, 
-                (struct sockaddr*)&addr, sizeof(addr));
-    if(bind_ret < 0)
+    if( bind(listen_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1 )
     {
         perror("bind");
         return -1;
     }
-    // 监听
-    // int listen(int sockfd, int backlog);
-    int listen_ret = listen(listen_fd, 5);
-    if(listen_ret < 0)
+
+    if( listen(listen_fd, 5) == -1 )
     {
         perror("listen");
         return -1;
     }
-    // 定义文件描述符数组
-    //struct pollfd* fd_list = (struct pollfd*)malloc(sizeof(struct pollfd) * DEFAULT_FD_SIZE);
+
     struct pollfd fd_list[1024];
     fd_init(fd_list, sizeof(fd_list)/sizeof(struct pollfd));
-
-    // 添加listen_fd到fd_list中
     fd_add(listen_fd, fd_list, sizeof(fd_list)/sizeof(struct pollfd));
 
     while(1)
     {
-        // int poll(struct pollfd *fds, nfds_t nfds, int timeout);
         int poll_ret = poll(fd_list, sizeof(fd_list)/sizeof(struct pollfd), 10000);
-        if(poll_ret < 0)
+        if(poll_ret == -1)
         {
             perror("poll");
             continue;
@@ -137,7 +117,7 @@ int main(int argc, char* argv[])
             printf("poll timeout !\n");
             continue;
         }
-        for(int i = 0; i<sizeof(fd_list)/sizeof(struct pollfd); i++)
+        for(size_t i = 0; i<sizeof(fd_list)/sizeof(struct pollfd); i++)
         {
             if(fd_list[i].fd == -1)
             {
@@ -178,6 +158,7 @@ int main(int argc, char* argv[])
                 }
                 buf[read_ret] = '\0';
                 printf("client say : %s\n", buf);
+                write(fd_list[i].fd, buf, strlen(buf));
             }
         } // 第二重循环
     } // 第一重循环

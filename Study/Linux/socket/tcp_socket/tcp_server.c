@@ -87,25 +87,24 @@ int main(int argc, char* argv[])
     }
     //1,打开socket 得到sock
     int sock = socket(AF_INET, SOCK_STREAM, 0);//ipv4, tcp 
-    if(sock < 0)
+    if(sock == -1)
     {
         perror("socket");
         return 1;
     }
-
     //2,定义两个sockaddr_in结构体的对象
     struct sockaddr_in server_socket;
     struct sockaddr_in client_socket;
 
     //3,结构体初始化
-    server_socket.sin_family = ADDR_FAMILY;
+    server_socket.sin_family = AF_INET;
     server_socket.sin_port = htons(atoi(argv[1]));
     //server_socket.sin_addr.s_addr = inet_addr(argv[1]);
     server_socket.sin_addr.s_addr = INADDR_ANY;
 
     //4,绑定(sock和server_sock绑定)
     int bind_ret = bind(sock, (struct sockaddr*)&server_socket, sizeof(struct sockaddr_in));
-    if(bind_ret < 0)
+    if(bind_ret == -1)
     {
         perror("bind");
         return 2;
@@ -113,7 +112,7 @@ int main(int argc, char* argv[])
 
     //5,监听
     int listen_ret = listen(sock, 5);
-    if(listen_ret < 0)
+    if(listen_ret == -1)
     {
         perror("listen");
         return 3;
@@ -182,7 +181,6 @@ int main(int argc, char* argv[])
                     }
                     buf[strlen(buf)-1] = '\0';
                 }
-
             }
         }
 #endif
@@ -203,6 +201,7 @@ int main(int argc, char* argv[])
         // 线程分离
         pthread_detach(tid);
 #endif
+
     }
     //8,服务完毕 关闭sock
     close(sock);

@@ -1,7 +1,8 @@
 
 
 .PHONY:clean
-cgi:cgi.cpp date/date.cpp
+
+cgi:cgi.cpp
 	clang++ $^ -o $@ -g 
 clean:
 	rm -f cgi core.*

@@ -1,7 +1,11 @@
 
 
 .PHONY:clean
-main:poll_tcpServer.c
-	clang $^ -o $@ -g -std=c99
+
+all:client server
+server:poll_tcpServer.c
+	clang $^ -o $@ -g 
+client:client.c
+	clang $^ -o $@ -g
 clean:
-	rm -f main core.*
+	rm -f server client core.*

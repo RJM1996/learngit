@@ -14,8 +14,8 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <strings.h>
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
 #include "proto.h"
 
 #define ADDR_FAMILY AF_INET
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     printf("Welcome to Online Chat Client\n");
     //1, 打开socket
     int sock = socket(AF_INET, SOCK_STREAM, 0); //ipv4, tcp
-    if(sock < 0)
+    if(sock == -1)
     {
         perror("socket");
         return 2;
@@ -46,7 +46,6 @@ int main(int argc, char* argv[])
     struct sockaddr_in server_sock;
     //3, bzero() server_sock
     bzero(&server_sock, sizeof(struct sockaddr_in));
-
     //4, 初始化server_sock
     server_sock.sin_family = ADDR_FAMILY;
     server_sock.sin_port = htons(atoi(argv[2]));
@@ -80,14 +79,14 @@ int main(int argc, char* argv[])
             return 4;
         }
         // 把sock中的数据读到buf
-        int read_ret = read(sock, buf, sizeof(buf));
+        read(sock, buf, sizeof(buf));
         printf("server echo: %s\n", buf);
 
-       // int write_ret = write(sock, request, sizeof(Request));
-       // int read_ret = read(sock, response, sizeof(Response));
+        // 回显信息
+        write(sock, buf, sizeof(Request));
+        read(sock, buf, sizeof(Response));
     }
     //7, 结束关闭sock
     close(sock);
-
     return 0;
 }
