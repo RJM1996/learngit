@@ -62,16 +62,6 @@ int client(char* arg)
                 perror("write");
                 return 404;
             }
-
-        }
-        
-
-
-
-        if(write(fd, buf, sizeof(buf)-1) == -1)
-        {
-            perror("write");
-            continue;
         }
 
         // 接收 tcp 服务器的回应

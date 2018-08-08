@@ -120,9 +120,23 @@ void Test02()
     B->m_prev = C;
 }
 
+#include <boost/shared_ptr.hpp>
+void test_shared_ptr()
+{
+    boost::shared_ptr<int> shp1(new int(10));
+    boost::shared_ptr<int> shp2(shp1);
+    cout << *shp1 << endl;
+    *shp1 = 100;
+    cout << *shp2 << endl;
+//     auto_ptr<int> ap1(new int(100));
+//     unique_ptr<int> up1(new int(10));
+    cout << shp1.use_count() << endl;
+}
+
 int main()
 {
     // Test01();
-    Test02();
+    // Test02();
+    test_shared_ptr();
     return 0;
 }
