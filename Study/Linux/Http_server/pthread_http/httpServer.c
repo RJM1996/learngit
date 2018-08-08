@@ -467,7 +467,6 @@ int main(int argc, char* argv[])
     // 忽略 SIGPIPE 信号
     signal(SIGPIPE, SIG_IGN);
 
-
     // 2, 循环, 获得新连接
     while(1)
     {
@@ -496,7 +495,9 @@ int main(int argc, char* argv[])
         // int pthread_create(pthread_t *tidp,const pthread_attr_t *attr,
         //                   (void*)(*start_rtn)(void*),void *arg);
         pthread_t tid = 0;
+
         int pthread_create_ret = pthread_create(&tid, NULL, handle_request, (void*)connect_fd);
+
         if(pthread_create_ret < 0)
         {
             perror("pthread_create");

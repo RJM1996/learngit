@@ -133,10 +133,21 @@ void test_shared_ptr()
     cout << shp1.use_count() << endl;
 }
 
+void test_uni()
+{
+    char str[5];
+    str[0] = -42;
+    str[1] = -78;
+    str[2] = -39;
+    str[3] = -29;
+    cout << str << endl;
+}
+
 int main()
 {
     // Test01();
     // Test02();
-    test_shared_ptr();
+    // test_shared_ptr();
+    test_uni();
     return 0;
 }

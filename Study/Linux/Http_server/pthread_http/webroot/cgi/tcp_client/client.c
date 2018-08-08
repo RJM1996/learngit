@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-#define SERVER_IP "47.93.189.83"
+#define SERVER_IP "192.168.228.134"
 #define SERVER_PORT 9999
 #define BUF_SIZE 1024
 
@@ -33,6 +33,7 @@ int client(char* arg)
         perror("connect");
         return -1;
     }
+
     while(1)
     {
         (void)arg;
@@ -42,27 +43,69 @@ int client(char* arg)
         char buf[BUF_SIZE] = {0};
         // arg:button=open
         char flag[256];
-        sscanf(arg, "button=%s", flag);
+        int id;
+        sscanf(arg, "button=%s&id=%d", flag, &id);
         if(strcmp(flag, "open") == 0)
         {
-            // 如果是 open, 就给服务器发送:http open
-            const char* commond = "http open";
-            if(write(fd, commond, sizeof(commond)) == -1)
+            switch(id)
             {
-                perror("write");
-                return 404;
+            case 1:
+                {
+                    // 如果是命令是 open 设备id = 1, 就给服务器发送:app open 1
+                    const char* open_id01 = "app open 1";
+                    if(write(fd, open_id01, sizeof(open_id01)) == -1)
+                    {
+                        perror("write");
+                        return 404;
+                    }
+                    break;
+                }
+
+            case 2:
+                {
+                    const char* open_id02 = "app open 2";
+                    if(write(fd, open_id02, sizeof(open_id02)) == -1)
+                    {
+                        perror("write");
+                        return 404;
+                    }
+                    break;
+                }
+            default:
+                break;
             }
-        }
+        } // if open end
+
         if(strcmp(flag, "close") == 0)
         {
-            // 如果是 open, 就给服务器发送:http close
-            const char* commond = "http close";
-            if(write(fd, commond, sizeof(commond)) == -1)
+            switch(id)
             {
-                perror("write");
-                return 404;
+            case 1:
+                {
+                    // 如果是命令是 close 设备id = 1, 就给服务器发送:app close 1
+                    const char* close_id01 = "app close 1";
+                    if(write(fd, close_id01, sizeof(close_id01)) == -1)
+                    {
+                        perror("write");
+                        return 404;
+                    }
+                    break;
+                }
+
+            case 2:
+                {
+                    const char* close_id02 = "app close 2";
+                    if(write(fd, close_id02, sizeof(close_id02)) == -1)
+                    {
+                        perror("write");
+                        return 404;
+                    }
+                    break;
+                }
+            default:
+                break;
             }
-        }
+        } // if close end
 
         // 接收 tcp 服务器的回应
         ssize_t read_size = read(fd, buf, sizeof(buf)-1);
@@ -78,9 +121,13 @@ int client(char* arg)
         }
         // 收到 tcp服务器的回应, 根据回应判断是否控制成功
         // 再将结果返回给 app 客户端
-        printf("server say: %s\n", buf);
+        
+        printf("<html>");
+        printf("<meta charset=utf-8>");
+        printf("<h2>%s</h2>", buf);
+        printf("</html>");
     }
-    close(fd);
+
     return 0;
 }
 
