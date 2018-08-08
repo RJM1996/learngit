@@ -39,8 +39,34 @@ int client(char* arg)
         // 解析 arg 里面的请求数据
         // 然后发给 tcp 服务器 
         // TODO
-
         char buf[BUF_SIZE] = {0};
+        // arg:button=open
+        char flag[256];
+        sscanf(arg, "button=%s", flag);
+        if(strcmp(flag, "open") == 0)
+        {
+            // 如果是 open, 就给服务器发送:http open
+            const char* commond = "http open";
+            if(write(fd, commond, sizeof(commond)) == -1)
+            {
+                perror("write");
+                return 404;
+            }
+        }
+        if(strcmp(flag, "close") == 0)
+        {
+            // 如果是 open, 就给服务器发送:http close
+            const char* commond = "http close";
+            if(write(fd, commond, sizeof(commond)) == -1)
+            {
+                perror("write");
+                return 404;
+            }
+
+        }
+        
+
+
 
         if(write(fd, buf, sizeof(buf)-1) == -1)
         {
