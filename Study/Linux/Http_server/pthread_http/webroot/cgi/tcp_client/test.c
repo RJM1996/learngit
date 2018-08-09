@@ -34,7 +34,7 @@ int client()
         return -1;
     }
 
-        const char* buf = "hello, server";
+        const char* buf = "app open 1";
         if(write(fd, buf, strlen(buf))== -1)
         {
             perror("write");

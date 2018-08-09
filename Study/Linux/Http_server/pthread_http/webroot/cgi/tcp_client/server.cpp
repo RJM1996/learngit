@@ -44,18 +44,20 @@ int getline(int client_fd, char* buf, char* source, char* id,  char* directive)
         return -1;
     }
 
-    printf("buf = %s\n",buf);
+    // printf("buf = %s\n",buf);
 
-
-#if 0
     size_t i = 0;
     size_t j = 0;
     while(!isspace(buf[i]))
     {
+        printf("source[%lu] = %c\n", j, source[j]);
         source[j++] = buf[i++];
     }
     source[j] = '\0';
-    //printf("%s\n", source);
+
+
+    printf("source = %s\n", source);
+
     //走到这儿，将客户端确定
     while(isspace(buf[i]))
     {
@@ -67,6 +69,8 @@ int getline(int client_fd, char* buf, char* source, char* id,  char* directive)
         directive[j++] = buf[i++];
     }
     directive[j] = '\0';
+    printf("directive = %s\n", directive);
+
     //走到这儿读到命令
     while(isspace(buf[i]))
     {
@@ -78,8 +82,8 @@ int getline(int client_fd, char* buf, char* source, char* id,  char* directive)
         id[j++] = buf[i++];
     }
     id[j] = '\0';
+    printf("id = %s\n", id);
     //读到id
-#endif
     return 1;
 }
 
@@ -108,13 +112,9 @@ void ProcessRequest(int client_fd, std::vector<sockid> mq){
     char buf[MAXSIZE] = {0};
     char id[MAXSIZE/4] = {0};
 
-    ssize_t size = read(client_fd, buf, sizeof(buf));
-    buf[size] = 0;
-    printf("buf = %s\n", buf);
+    getline(client_fd, buf, source, id,  directive);
 
-    // getline(client_fd, buf, source, id,  directive);
-
-    // printf("%s:%s:%s\n", source, directive, id);
+    printf("%s:%s:%s\n", source, directive, id);
 
     if(strcasecmp(source, "mcu") == 0)
     {
