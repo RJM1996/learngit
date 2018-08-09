@@ -10,4 +10,4 @@ client:client.c
 	clang -o $@  $^ -g 
 
 clean:
-	rm -f client server
+	rm -f client server core.*

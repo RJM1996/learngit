@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./main 8080
+./src/httpServer 8080

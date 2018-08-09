@@ -4,10 +4,10 @@ ROOT=$(shell pwd)
 
 .PHONY:all
 
-all:main cgi
+all:httpServer cgi
 
-main:httpServer.c url.c
-	gcc $^ -o $@ -g -lpthread
+httpServer:
+	cd $(ROOT)/src/; make clean; make; cd -
 cgi:
 	cd $(ROOT)/webroot/cgi/mysql; make clean; make; cd -
 	cd $(ROOT)/webroot/cgi/cal; make clean; make; cd -
@@ -15,4 +15,4 @@ cgi:
 	cd $(ROOT)/webroot/cgi/tcp_client; make clean; make; cd -
 
 clean:
-	rm -f main core.*
+	rm -f httpServer core.*

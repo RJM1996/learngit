@@ -14,6 +14,8 @@
 
 int client(char* arg)
 {
+    printf("<html>");
+    printf("<meta charset=utf-8>");
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     if(inet_aton(SERVER_IP, &addr.sin_addr) == 0)
@@ -34,100 +36,101 @@ int client(char* arg)
         return -1;
     }
 
-    while(1)
+    // 解析 arg 里面的请求数据
+    // 然后发给 tcp 服务器 
+    char buf[BUF_SIZE] = {0};
+    // arg:button=open
+    char* button;
+    char* number;
+
+    // button=open&id=1
+
+    strtok(arg, "=&");
+    button = strtok(NULL, "=&");
+    strtok(NULL, "=&");
+    number = strtok(NULL, "=&");
+    int id = atoi(number);
+
+    if(strncmp(button, "open", 4) == 0)
     {
-        (void)arg;
-        // 解析 arg 里面的请求数据
-        // 然后发给 tcp 服务器 
-        // TODO
-        char buf[BUF_SIZE] = {0};
-        // arg:button=open
-        char flag[256];
-        int id;
-        sscanf(arg, "button=%s&id=%d", flag, &id);
-        if(strcmp(flag, "open") == 0)
+        switch(id)
         {
-            switch(id)
+        case 1:
             {
-            case 1:
+                // 如果是命令是 open 设备id = 1, 就给服务器发送:app open 1
+                const char* open_id01 = "app open 1";
+                if(write(fd, open_id01, strlen(open_id01)) == -1)
                 {
-                    // 如果是命令是 open 设备id = 1, 就给服务器发送:app open 1
-                    const char* open_id01 = "app open 1";
-                    if(write(fd, open_id01, sizeof(open_id01)) == -1)
-                    {
-                        perror("write");
-                        return 404;
-                    }
-                    break;
+                    perror("write");
+                    return 404;
                 }
-
-            case 2:
-                {
-                    const char* open_id02 = "app open 2";
-                    if(write(fd, open_id02, sizeof(open_id02)) == -1)
-                    {
-                        perror("write");
-                        return 404;
-                    }
-                    break;
-                }
-            default:
-                break;
             }
-        } // if open end
+            break;
 
-        if(strcmp(flag, "close") == 0)
-        {
-            switch(id)
+        case 2:
             {
-            case 1:
+                const char* open_id02 = "app open 2";
+                if(write(fd, open_id02, strlen(open_id02)) == -1)
                 {
-                    // 如果是命令是 close 设备id = 1, 就给服务器发送:app close 1
-                    const char* close_id01 = "app close 1";
-                    if(write(fd, close_id01, sizeof(close_id01)) == -1)
-                    {
-                        perror("write");
-                        return 404;
-                    }
-                    break;
+                    perror("write");
+                    return 404;
                 }
-
-            case 2:
-                {
-                    const char* close_id02 = "app close 2";
-                    if(write(fd, close_id02, sizeof(close_id02)) == -1)
-                    {
-                        perror("write");
-                        return 404;
-                    }
-                    break;
-                }
-            default:
-                break;
             }
-        } // if close end
+            break;
 
-        // 接收 tcp 服务器的回应
-        ssize_t read_size = read(fd, buf, sizeof(buf)-1);
-        if(read_size == -1)
-        {
-            perror("read");
-            continue;
-        }
-        if(read_size == 0)
-        {
-            printf("server busy");
+        default:
             break;
         }
-        // 收到 tcp服务器的回应, 根据回应判断是否控制成功
-        // 再将结果返回给 app 客户端
-        
-        printf("<html>");
-        printf("<meta charset=utf-8>");
-        printf("<h2>%s</h2>", buf);
-        printf("</html>");
-    }
+    } // if open end
 
+    else if(strncmp(button, "close", 5) == 0)
+    {
+        switch(id)
+        {
+        case 1:
+            {
+                // 如果是命令是 close 设备id = 1, 就给服务器发送:app close 1
+                const char* close_id01 = "app close 1";
+                if(write(fd, close_id01, strlen(close_id01)) == -1)
+                {
+                    perror("write");
+                    return 404;
+                }
+            }
+            break;
+
+        case 2:
+            {
+                const char* close_id02 = "app close 2";
+                if(write(fd, close_id02, strlen(close_id02)) == -1)
+                {
+                    perror("write");
+                    return 404;
+                }
+            }
+            break;
+
+        default:
+            break;
+        }
+    } // if close end
+
+    // 接收 tcp 服务器的回应
+    printf("程序走到接收回应");
+    ssize_t read_size = read(fd, buf, sizeof(buf)-1);
+    if(read_size == -1)
+    {
+        perror("read");
+    }
+    if(read_size == 0)
+    {
+        printf("server busy");
+    }
+    buf[read_size] = '\0';
+    // 收到 tcp服务器的回应, 根据回应判断是否控制成功
+    // 再将结果返回给 app 客户端
+    printf("<h2>%s</h2>", buf);
+    printf("</html>");
     return 0;
 }
 

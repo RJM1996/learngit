@@ -37,7 +37,7 @@ int main()
 {
     char* method = NULL;
     char* query_string = NULL;
-    char* arg;
+    char* arg = NULL;
     int content_len = -1;
     char buf[1024];
     if(getenv("METHOD") != NULL)

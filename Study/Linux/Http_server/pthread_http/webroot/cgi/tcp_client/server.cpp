@@ -44,8 +44,6 @@ int getline(int client_fd, char* buf, char* source, char* id,  char* directive)
         return -1;
     }
 
-    // printf("buf = %s\n",buf);
-
     size_t i = 0;
     size_t j = 0;
     while(!isspace(buf[i]))
@@ -54,8 +52,6 @@ int getline(int client_fd, char* buf, char* source, char* id,  char* directive)
         source[j++] = buf[i++];
     }
     source[j] = '\0';
-
-
     printf("source = %s\n", source);
 
     //走到这儿，将客户端确定
@@ -130,11 +126,13 @@ void ProcessRequest(int client_fd, std::vector<sockid> mq){
     }
     else if(strcasecmp(source, "app") == 0)
     {
+        printf("程序走到发送给app客户端循环里\n");
         //如果是app,
         //1.需要响应一个接收成功报文
         //2.需要根据id找到mcu的fd
         char respond[] = "tcp ok";
-        send(client_fd, respond, sizeof(respond), 0);
+        send(client_fd, respond, sizeof(respond)-1, 0);
+        printf("程序走到发送给app客户端\n");
         int mcu_fd = findSockId(atoi(id), mq);
         send(mcu_fd, directive, sizeof(directive), 0);
     }
