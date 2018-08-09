@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <string>
 
 #define SERVER_IP "192.168.228.134"
 #define SERVER_PORT 9999
@@ -39,84 +40,29 @@ int client(char* arg)
     // 解析 arg 里面的请求数据
     // 然后发给 tcp 服务器 
     char buf[BUF_SIZE] = {0};
-    // arg:button=open
-    char* button;
-    char* number;
-
+    std::string button;
+    std::string number;
     // button=open&id=1
-
     strtok(arg, "=&");
     button = strtok(NULL, "=&");
     strtok(NULL, "=&");
     number = strtok(NULL, "=&");
-    int id = atoi(number);
 
-    if(strncmp(button, "open", 4) == 0)
+    std::string msg("app");
+    msg += " ";
+    msg += button;
+    msg += " ";
+    msg += number;
+    // msg = "app open 1"
+
+    // 发送
+    if(write(fd, msg.c_str(), msg.size()) == -1)
     {
-        switch(id)
-        {
-        case 1:
-            {
-                // 如果是命令是 open 设备id = 1, 就给服务器发送:app open 1
-                const char* open_id01 = "app open 1";
-                if(write(fd, open_id01, strlen(open_id01)) == -1)
-                {
-                    perror("write");
-                    return 404;
-                }
-            }
-            break;
+        perror("write");
+        return 404;
+    }
 
-        case 2:
-            {
-                const char* open_id02 = "app open 2";
-                if(write(fd, open_id02, strlen(open_id02)) == -1)
-                {
-                    perror("write");
-                    return 404;
-                }
-            }
-            break;
-
-        default:
-            break;
-        }
-    } // if open end
-
-    else if(strncmp(button, "close", 5) == 0)
-    {
-        switch(id)
-        {
-        case 1:
-            {
-                // 如果是命令是 close 设备id = 1, 就给服务器发送:app close 1
-                const char* close_id01 = "app close 1";
-                if(write(fd, close_id01, strlen(close_id01)) == -1)
-                {
-                    perror("write");
-                    return 404;
-                }
-            }
-            break;
-
-        case 2:
-            {
-                const char* close_id02 = "app close 2";
-                if(write(fd, close_id02, strlen(close_id02)) == -1)
-                {
-                    perror("write");
-                    return 404;
-                }
-            }
-            break;
-
-        default:
-            break;
-        }
-    } // if close end
-
-    // 接收 tcp 服务器的回应
-    printf("程序走到接收回应");
+    // 接收
     ssize_t read_size = read(fd, buf, sizeof(buf)-1);
     if(read_size == -1)
     {
