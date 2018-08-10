@@ -1,15 +1,15 @@
 #include "test.h"
 
-extern char* hello;
+char* hello;
 
 int main()
 {
-    // printf("%s\n", hello);
-    // printStr();
+    printf("%s\n", hello);
+    printStr();
     // test();
     // test();
     // test();
     // test();
-    func01();
-    func02();
+    // func01();
+    // func02();
 }

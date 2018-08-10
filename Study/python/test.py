@@ -759,4 +759,14 @@ f = open("text.txt", 'w')
 
 # # print delattr(C, 'x')
 
+# dir
+# c = 10
+# print dir(c)
+# # vars
+# class C(object):
+#     pass
+# print vars(C)
+# 
+# super
+
 print '\n'
