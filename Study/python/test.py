@@ -659,13 +659,104 @@ f = open("text.txt", 'w')
 # 自省: 运行时获取对象的相关信息
 
 # 创建一个类
-class ClassName(object): # 新式类, 推荐
-    pass
+# class ClassName(object): # 新式类, 推荐
+#     pass
+# 
+# help(ClassName)
+# 
+# t = ClassName() # 旧式类
+# print type(t)
 
-help(ClassName)
 
-t = ClassName() # 旧式类
-print type(t)
+# class C(object):
+#     def Print(self): # self 类似 this 指针
+#         print 'hehe'
+# 
+# c = C()
+# c.Print()  # 推荐写法
+# C.Print(c) # 等价写法
 
+# 实例属性(非静态成员变量)
+# class C(object):
+#     def __init__(self, x): # 创建变量的函数, 构造器
+#         self.a = x
+# 
+#     def Print(self):
+#         print self.a
+# 
+# c = C(100)
+# c.Print()
+
+# 类属性
+# class C(object):
+#     val = 100;
+# 
+# print C.val
+
+# 静态方法 != 静态成员函数
+# class C(object):
+#     val = 100
+#     @staticmethod # 装饰器
+#     def Print():
+#         print 'hehe'
+#     # Print = staticmethod(Print) # 不推荐
+# 
+# C.Print()
+
+# 类方法(静态成员函数)
+# class C(object):
+#     val = 100
+#     @classmethod
+#     def Print(cls): # cls 表示当前类
+#         print 'hehe'
+#         print cls.val
+# 
+# C.Print()
+# 
+# class C(object):
+#     def __init__(self):
+#         self.__a = 100 # 私有成员
+# c = C()
+# print c.__a
+
+# 继承 公有 支持多继承
+# 多态 与继承没有必然联系 类似 C++ 模板
+
+# 常用内建函数
+# class Parent(object):
+#     pass
+# class Child(Parent):
+#     pass
+
+# issubclass
+# print issubclass(Parent, object)
+# print issubclass(Child, object)
+# 
+# # isinstance
+# c = Child()
+# print isinstance(c, Child)
+# print isinstance(c, Parent)
+
+# hasattr getattr setattr delattr
+# class C(object):
+#     x = 100
+# 
+# print hasattr(C, 'x')
+# print hasattr(C, 'y')
+# 
+# print getattr(C, 'x')
+# # print getattr(C, 'y')
+# 
+# print setattr(C, 'x', 200)
+# print setattr(C, 'y', 300)
+# print getattr(C, 'x')
+# print getattr(C, 'y')
+# 
+# 
+# for i in range(1, 100):
+#     name = 'x' + srr(i)
+#     setattr(C, name, 0)
+
+# # print delattr(C, 'x')
 
 print '\n'
