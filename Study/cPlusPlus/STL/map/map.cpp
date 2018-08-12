@@ -197,13 +197,57 @@ void TestMap_WaterMargin()
     cout << "Map size: " << mymap.size() << endl;
 }
 
+void TestMultiMap()
+{
+    multimap <string, string> mymap;
+    mymap.insert(pair<string, string>("宋江", "及时雨"));
+    mymap.insert(pair<string, string>("吴用", "智多星"));
+    mymap.insert(make_pair("李逵", "黑旋风"));
+    mymap.insert(make_pair("武松", "行者"));
+    mymap.insert(make_pair("鲁智深", "花和尚"));
+    printContainer(mymap);
+
+    cout << "Map size: " << mymap.size() << endl;
+    // 插入 key 存在, val 不同的元素
+    mymap.insert(make_pair("李逵", "铁牛"));
+    cout << "Map size: " << mymap.size() << endl;
+    printContainer(mymap);
+
+    multimap <int, int> m;
+    for(int i=0; i<10; i++)
+    {
+        m.insert(make_pair(i, i));
+    }
+    m.insert(make_pair(5, 11));
+    m.insert(make_pair(5, 12));
+    m.insert(make_pair(5, 13));
+    m.insert(make_pair(5, 14));
+
+    printContainer(m);
+    cout << "key 为 5 的元素个数: " << m.count(5) << endl;
+
+    multimap<int, int>::iterator it;
+    it = m.lower_bound(5);
+    cout << it->first << " -> " << it->second << endl;
+    it = m.upper_bound(5);
+    cout << it->first << " -> " << it->second << endl;
+
+    cout << endl;
+
+    typedef multimap<int, int>::iterator Iter;
+    pair<Iter, Iter> ret = m.equal_range(5);
+    cout << ret.first->first << " -> " << ret.first->second << endl;
+    cout << ret.second->first << " -> " << ret.second->second << endl;
+}
+
 int main()
 {
     // TestMap01();
     // TestMap02();
     // TestMap03();
     // TestMap04();
-    TestMap_WaterMargin();
+    // TestMap_WaterMargin();
+    TestMultiMap();
     return 0;
 }
 
