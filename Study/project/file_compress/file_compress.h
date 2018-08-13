@@ -22,10 +22,16 @@ struct CharInfo
     {
         return _count > info._count;
     }
+
+    bool operator!= (const CharInfo& info)
+    {
+        return _count != info._count;
+    }
 };
 
 class FileCompress
 {
+    
 public:
     FileCompress()
     {
@@ -47,9 +53,12 @@ public:
             _infos[ch]._count++; // 统计次数
         }
         // 2. 构建哈夫曼数
-        HuffmanTree<CharInfo> t(_infos, 256);
-        
+        CharInfo invaild;
+        invaild._count = 0;
+        HuffmanTree<CharInfo> t(_infos, 256, invaild);
 
+        // 3. 生成哈夫曼编码
+        //    编码存到 infos
         
     }
     void Uncompress(const char* file);
@@ -58,3 +67,9 @@ private:
 
 
 };
+
+void TestCompress()
+{
+    FileCompress fc;
+    fc.Compress("input.txt");
+}

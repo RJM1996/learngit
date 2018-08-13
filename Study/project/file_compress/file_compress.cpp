@@ -5,5 +5,5 @@
 // 文件压缩
 int main()
 {
-
+    TestCompress();
 }

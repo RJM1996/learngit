@@ -10,14 +10,15 @@ struct HuffmanTreeNode
 {
     HuffmanTreeNode<W>* _left;
     HuffmanTreeNode<W>* _right;
+    HuffmanTreeNode<W>* _parent;
     W _w;
 
     HuffmanTreeNode(const W& w)
         :_w(w)
         ,_left(NULL)
         ,_right(NULL)
+        ,_parent(NULL)
     {
-
     }
 };
 
@@ -34,15 +35,19 @@ public:
         }
     };
 
-    HuffmanTree( W* a, size_t n ) // 数组
+    HuffmanTree( W* a, size_t n, W& invaild ) // 数组
         :_root(NULL)
     {
         priority_queue<Node*, vector<Node*>, NodeCompare> minheap;
         
         for(size_t i=0; i<n; i++)
         {
-            minheap.push(new Node(a[i]));
+            if(a[i] != invaild)
+            {
+                minheap.push(new Node(a[i]));
+            }
         }
+
         while(minheap.size() > 1)
         {
             Node* left = minheap.top();
@@ -53,6 +58,8 @@ public:
             Node* parent = new Node(left->_w + right->_w);
             parent->_left = left;
             parent->_right = right;
+            left->_parent = parent;
+            right->_parent = parent;
             parent->_w = left->_w + right->_w;
 
             minheap.push(parent);
