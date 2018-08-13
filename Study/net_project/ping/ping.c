@@ -178,19 +178,21 @@ struct ip
 float unpack(int num, pid_t pid, struct sockaddr_in from)
 {
     (void) num;
-    (void) pid;
     struct timeval end;
     gettimeofday(&end, NULL);
     struct ip* pip = (struct ip*)recvbuf;
     struct icmp* picmp = (struct icmp*)(recvbuf + (pip->ip_hl << 2));
     float d = diftime(&end, (struct timeval*)picmp->icmp_data);
 
-    printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms\n",
-           DATA_LEN + 8, 
-           inet_ntoa(from.sin_addr), 
-           ntohs(picmp->icmp_seq), 
-           pip->ip_ttl,
-           d);
+    if(picmp->icmp_id == pid)
+    {
+        printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms\n",
+               DATA_LEN + 8, 
+               inet_ntoa(from.sin_addr), 
+               ntohs(picmp->icmp_seq), 
+               pip->ip_ttl,
+               d);
+    }
     return d;
 }
 
