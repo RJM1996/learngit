@@ -4,9 +4,8 @@
 
 using namespace std;
 
-
 template<class W>
-struct HuffmanTreeNode
+struct HuffmanTreeNode /* 哈弗曼树的节点 */
 {
     HuffmanTreeNode<W>* _left;
     HuffmanTreeNode<W>* _right;
@@ -18,8 +17,7 @@ struct HuffmanTreeNode
         ,_left(NULL)
         ,_right(NULL)
         ,_parent(NULL)
-    {
-    }
+    {}
 };
 
 template<class W>
@@ -38,6 +36,7 @@ public:
     HuffmanTree( W* a, size_t n, W& invaild ) // 数组
         :_root(NULL)
     {
+        // 将优先级队列变为一个小堆, 作为哈弗曼树
         priority_queue<Node*, vector<Node*>, NodeCompare> minheap;
         
         for(size_t i=0; i<n; i++)
@@ -66,6 +65,12 @@ public:
         }
 
         _root = minheap.top();
+    }
+
+    // 获得树的根节点
+    Node* getRoot()
+    {
+        return _root;
     }
 
 private:
