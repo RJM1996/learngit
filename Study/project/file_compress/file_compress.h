@@ -50,7 +50,7 @@ public:
         // while( ifs.get(ch) )
         while( ifs >> ch )
         {
-            _infos[ch]._count++; // 统计次数
+            _infos[(unsigned char)ch]._count++; // 统计次数
         }
         // 2. 构建哈夫曼数
         CharInfo invaild;
