@@ -80,12 +80,17 @@ void Test01()
     cout << *sp1 << endl;
 }
 
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
+
+using namespace boost;
+
 // 循环引用问题
 struct ListNode
 {
 public:
     ListNode(int t_val)
-        :val(t_val), m_next(NULL), m_prev(NULL)
+        :val(t_val)
     {}
 
     ~ListNode()
@@ -95,8 +100,10 @@ public:
 
 public:
     int val;
-    SharedPtr<ListNode> m_next;
-    SharedPtr<ListNode> m_prev;
+    // boost::shared_ptr<ListNode> m_next;
+    // boost::shared_ptr<ListNode> m_prev;
+    boost::weak_ptr<ListNode> m_next;
+    boost::weak_ptr<ListNode> m_prev;
 };
 
 void Test02()
@@ -106,8 +113,8 @@ void Test02()
     // node1->m_next = node2;
     // node2->m_prev = node1;
     
-    SharedPtr<ListNode> A(new ListNode(1));
-    SharedPtr<ListNode> B(new ListNode(1));
+    boost::shared_ptr<ListNode> A(new ListNode(1));
+    boost::shared_ptr<ListNode> B(new ListNode(1));
 
     A->m_next = B; // B的引用计数+1, 变为2
     B->m_prev = A; // A的引用计数+1, 变为2
@@ -115,13 +122,12 @@ void Test02()
     // B 出作用域, 先析构, 引用计数-1, 变为1, 空间并未释放
     // A 出作用域, 后析构, 引用计数-1, 变为1, 空间也没释放
 
-    SharedPtr<ListNode> C(NULL);
-    A->m_next = C;
-    B->m_prev = C;
+    // shared_ptr<ListNode> C(NULL);
+    // A->m_next = C;
+    // B->m_prev = C;
 }
 
 
-#include <boost/shared_ptr.hpp>
 void test_shared_ptr()
 {
     boost::shared_ptr<int> shp1(new int(10));
@@ -147,8 +153,8 @@ void test_uni()
 int main()
 {
     // Test01();
-    // Test02();
+    Test02();
     // test_shared_ptr();
-    test_uni();
+    // test_uni();
     return 0;
 }
