@@ -120,6 +120,7 @@ void Test02()
     B->m_prev = C;
 }
 
+
 #include <boost/shared_ptr.hpp>
 void test_shared_ptr()
 {
