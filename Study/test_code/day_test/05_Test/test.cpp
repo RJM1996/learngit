@@ -55,9 +55,9 @@ void TestStrncpy()
 /* qsort 递归版 */
 void myqsort(vector<int>& vc, int left, int right)
 {
-    int size = (int)vc.size();
-    if(size == 0)
-        return ;
+    // int size = (int)vc.size();
+    // if(size == 0)
+    //     return ;
     if(left > right)
         return ;
     int tmp = vc[left]; /* tmp 基准值 */
@@ -180,23 +180,23 @@ void Test_static()
 
 void TestConst()
 {
-    char a = 'a';
-    char* const p = &a;
-    // p = NULL;
-    const char* q = &a;
-    // *q = 'b';
-    const char* const ptr = &a;
-    // ptr = NULL;
-    // *ptr = 'b';
+    // char a = 'a';
+    // char* const p = &a;
+    // // p = NULL;
+    // const char* q = &a;
+    // // *q = 'b';
+    // const char* const ptr = &a;
+    // // ptr = NULL;
+    // // *ptr = 'b';
 }
 
 int main()
 {
     // TestStrcpy();
     // TestStrncpy();
-    // TestQsort();
+    TestQsort();
     // TestQsort_nonrecur();
     // Test_static();
-    TestConst();
+    // TestConst();
     return 0;
 }
