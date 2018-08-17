@@ -215,7 +215,7 @@ void printContainer(container& s)
     cout << endl;
 }
 
-void test()
+void Test01()
 {
     Solution s;
     vector<Interval> vc;
@@ -240,9 +240,7 @@ void test()
     printContainer(vc);
 }
 
-
 int main()
 {
-    test();
     return 0;
 }
