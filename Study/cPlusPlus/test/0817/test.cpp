@@ -436,7 +436,6 @@ void Test09()
     cout << ret << endl;
 }
 
-#endif
 
 #include <vector>
 
@@ -515,6 +514,58 @@ float sum(float x)
     return sum;
 }
 
+#endif
+
+
+class X
+{
+public:
+    X(int val)
+    {
+        _val = val;
+    }
+
+    int val()
+    {
+        return _val;
+    }
+private:
+    int _val;
+};
+
+class Y
+{
+public:
+    Y(int i)
+    {
+        X x(i);
+    }
+
+    static X xval()
+    {
+        return _xval;
+    }
+    static int callXval()
+    {
+        return _callXval;
+    }
+private:
+    static X _xval;
+    static int _callXval;
+};
+
+X x(20);
+X Y::_xval = x;
+int Y::_callXval = 0;
+
+void Test10()
+{
+    cout << Y::xval().val() << endl;
+    cout << Y::callXval() << endl;
+}
+
+
+
 int main()
 {
     // Test01();
@@ -530,6 +581,7 @@ int main()
     // Test07();
     // Test09();
     // test_vector();
-    cout << sum(10) << endl;
+    // cout << sum(10) << endl;
+    Test10();
     return 0;
 }
