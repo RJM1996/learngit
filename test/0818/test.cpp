@@ -75,8 +75,87 @@ void Test02()
 
 }
 
+template<class T>
+class A
+{
+private:
+    static T _count;
+public:
+    void GetAddr()
+    {
+        cout << &_count << endl;
+    }
+};
+template<>
+int A<int>::_count = 0;
+template<>
+float A<float>::_count = 0.0;
+template<>
+string A<string>::_count = " ";
+
+void Test03()
+{
+    A<int> a;
+    a.GetAddr();
+    A<int> b;
+    b.GetAddr();
+
+    A<float> c;
+    c.GetAddr();
+    A<float> d;
+    d.GetAddr();
+
+    A<string> e;
+    e.GetAddr();
+}
+
+void Test04()
+{
+    // int arr[] = {1, 2, 3, 4, 5};
+    // cout << sizeof(arr) << endl;
+    // cout << sizeof(&arr[0]) << endl;
+    // cout << sizeof(int*) << endl;
+
+    int n = 0;
+    int m = 0;
+    cin >> n >> m ;
+    int arr01[n][m];
+    for(int i=1; i<=n; i++)
+    {
+        for(int j=1; j<=m; j++)
+        {
+            arr01[i][j] = i*j;
+            printf("%2d ", arr01[i][j]);
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
+void Test05()
+{
+    int arr[10] = {1, 2, 3};
+    for(int i=0; i<10; i++)
+    {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+    cout << arr[11] << endl;
+    arr[11] = 100;
+    cout << arr[11] << endl;
+    cout << endl;
+}
+
+
+
+
 int main()
 {
     // Test01();
-    Test02();
+    // Test02();
+    // Test03();
+    // Test04();
+    Test05();
+
+    return 0;
 }
