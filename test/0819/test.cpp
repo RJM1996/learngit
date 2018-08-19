@@ -73,8 +73,47 @@ void test02()
     Print(v1);
 }
 
+double add(double x, double y)
+{
+    return x + y;
+}
+double sub(double x, double y)
+{
+    return x - y;
+}
+double mul(double x, double y)
+{
+    return x * y;
+}
+double div(double x, double y)
+{
+    return x / y;
+}
+
+// 函数指针数组
+double (*pfunc[])(double, double) = {
+    add, sub, mul, div
+};
+
+void test03()
+{
+    int add = 0;
+    int sub = 1;
+    int mul = 2;
+    int div = 3;
+    double ret = pfunc[add](10, 20);
+    cout << ret << endl;
+    ret = pfunc[sub](10, 20);
+    cout << ret << endl;
+    ret = pfunc[mul](10, 20);
+    cout << ret << endl;
+    ret = pfunc[div](10, 20);
+    cout << ret << endl;
+}
+
 int main()
 {
     // test01();
-    test02();
+    // test02();
+    test03();
 }
